@@ -165,6 +165,8 @@ Route::middleware(['auth','role:StaffUnit'])->group(function(){
    Route::post('/tugasunit/storetugas',[PenilaianKinerjaController::class,'storeTugas'])->name('tugas.storeTugas');
    Route::post('/tugasunit/penilaiantugas',[PenilaianKinerjaController::class,'simpanPenilaian'])->name('tugas.simpanpenilaian');
    Route::post('/tugasunit/revisitugas',[PenilaianKinerjaController::class,'kirimRevisi'])->name('tugas.revisitugas');
+
+   Route::get('/kinerjaform/listunit',[PenilaianKinerjaController::class,'listUnitForm'])->name('kinerjaform.listunit');
 });
 
 Route::middleware(['auth','role:SuperAdmin'])->group(function(){

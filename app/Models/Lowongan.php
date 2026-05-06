@@ -43,7 +43,4 @@ class Lowongan extends Model
         return $this->hasMany(Tugas::class, 'idLowongan');
     }
 
-    public function penilaianform(){
-       return $this->hasMany(PenilaianKinerjaForm::class, 'idLowongan');
-    }
 }

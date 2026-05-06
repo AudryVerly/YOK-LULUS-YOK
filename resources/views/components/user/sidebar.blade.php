@@ -266,12 +266,21 @@
                     </a>
                 </li>
             @endcan
+            @can('role:StaffUnit')
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('kinerjaform*') ? 'active bg-gradient-dark text-white' : 'text-dark' }}"
+                        href="{{ route('kinerjaform.listunit') }}">
+                        <i class="material-symbols-rounded opacity-5">contract_edit</i>
+                        <span class="nav-link-text ms-1">Form Penilaian Kinerja</span>
+                    </a>
+                </li>
+            @endcan
             @can('role:AdminOrStaff')
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('penilaiankinerja*') ? 'active bg-gradient-dark text-white' : 'text-dark' }}"
                         href="{{ route('penilaiankinerja.listmahasiswa') }}">
                         <i class="material-symbols-rounded opacity-5">chart_data</i>
-                        <span class="nav-link-text ms-1">Penilaian Kinerja</span>
+                        <span class="nav-link-text ms-1">Hasil Penilaian Kinerja</span>
                     </a>
                 </li>
             @endcan

@@ -275,7 +275,7 @@ class PenilaianKinerjaController extends Controller
     }
 
     // ini list tugas untuk mahasiswa
-    public function listTugas($idLowongan)
+    public function listTugas(string $idLowongan)
     {
         $idMahasiswa = Auth::user()->mahasiswa->id;
 
@@ -303,7 +303,7 @@ class PenilaianKinerjaController extends Controller
         return view('mahasiswaPage.listtugasmahasiswa', compact('tugas'));
     }
 
-    public function updateProgress($idTugas)
+    public function updateProgress(string $idTugas)
     {
         $idMahasiswa = Auth::user()->mahasiswa->id;
         DB::table('tugas_mahasiswa')
@@ -316,6 +316,7 @@ class PenilaianKinerjaController extends Controller
         return back()->with('success', 'status tugas diubah menjadi proses');
     }
 
+    //adminunit
     public function showMahasiswa()
     {
         $idUnit = Auth::user()->staffUnit()->pluck('idUnit')->first();
@@ -374,7 +375,7 @@ class PenilaianKinerjaController extends Controller
 
     }
 
-    public function submitTugas($idTugas, Request $request)
+    public function submitTugas(string $idTugas, Request $request)
     {
         // dd($request->all(), $request->file('tugas'));
         $request->validate([
@@ -651,4 +652,14 @@ class PenilaianKinerjaController extends Controller
 
         return view('penilaiankinerja.halamantotalpenilaian', compact('data'));
     }
+    //penilaian kinerja form
+    public function listUnitForm()
+    {
+        $unitId = Auth::user()->staffUnit()->pluck('idUnit');
+
+        $unit = Unit::whereIn('id', $unitId)->get();
+
+        return view('penilaiankinerjaform.listunit', compact('unit'));
+    }
+
 }

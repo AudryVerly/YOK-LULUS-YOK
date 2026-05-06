@@ -22,8 +22,4 @@ class KriteriaKinerja extends Model
     public function Unit(){
         return $this->belongsTo(Unit::class,'idUnit');
     }
-
-    public function penilaianform(){
-       return $this->hasMany(PenilaianKinerjaForm::class, 'idKriteriaKinerja');
-    }
 }

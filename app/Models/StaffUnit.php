@@ -25,8 +25,4 @@ class StaffUnit extends Model
     public function tugas(){
         return $this->hasMany(Tugas::class, 'idStaffUnit');
     }
-
-    public function penilaianform(){
-       return $this->hasMany(PenilaianKinerjaForm::class, 'idStaffUnit');
-    }
 }

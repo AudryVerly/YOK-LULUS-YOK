@@ -33,7 +33,4 @@ class Mahasiswa extends Model
         return $this->hasMany(PenilaianKinerja::class, 'idMahasiswa');
     }
 
-    public function penilaianform(){
-       return $this->hasMany(PenilaianKinerjaForm::class, 'idMahasiswa');
-    }
 }
