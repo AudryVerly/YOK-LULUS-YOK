@@ -885,17 +885,6 @@ class PenilaianKinerjaController extends Controller
                     ->where('nilaiMin', '<=', $totalAkhir)
                     ->where('nilaiMax', '>=', $totalAkhir)
                     ->value('kategori');
-                // dd([
-                //     'totalForm' => $totalForm,
-                //     'idPenilaianForm' => $idPenilaianForm,
-                //     'detailInsert' => $detailInsert,
-                //     'avgForm' => $avgForm,
-                //     'pendaftaran' => $pendaftaran,
-                //     'nilaiTugas' => $nilaiTugas,
-                //     'totalAkhir' => $totalAkhir,
-                //     'idUnit' => $idUnit,
-                //     'kategori' => $kategori,
-                // ]);
 
                 if ($pendaftaran) {
                     DB::table('total_penilaian_kinerja')->updateOrInsert(

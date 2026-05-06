@@ -88,7 +88,7 @@
                             {{-- BUTTON --}}
                             @if ($d->status_penilaian == 'boleh_dinilai')
                                 @if (!$d->sudah_dinilai)
-                                    <a href="{{ route('kinerjaform.form',[$d->idMahasiswa, $d->idLowongan]) }}" class="btn btn-success w-100 rounded-pill">
+                                    <a href="{{ route('kinerjaform.form',[$d->idMahasiswa,$d->idLowongan]) }}" class="btn btn-success w-100 rounded-pill">
                                         Mulai Penilaian
                                     </a>
                                 @else
