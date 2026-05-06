@@ -25,7 +25,7 @@
                                 Kelola tugas, monitoring progress, dan assign pekerjaan untuk student employee dalam unit
                                 ini.
                             </p>
-                            <a href="" class="btn btn-dark w-100 mt-3">
+                            <a href="{{ route('kinerjaform.listmahasiwa',$u->id) }}" class="btn btn-dark w-100 mt-3">
                                 Mulai Menilai →
                             </a>
                         </div>

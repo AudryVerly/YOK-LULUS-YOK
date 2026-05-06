@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('idStaffUnit');
             $table->double('total_nilai');
             $table->date('tanggal_menilai');
+            $table->text('catatan');
             $table->timestamps();
 
             $table->foreign('idMahasiswa')->references('id')->on('mahasiswa')->onDelete('cascade');

@@ -13,6 +13,7 @@ class PenilaianKinerjaForm extends Model
         'idLowongan',
         'idStaffUnit',
         'total_nilai',
-        'tanggal_menilai'
+        'tanggal_menilai',
+        'catatan'
     ];
 }

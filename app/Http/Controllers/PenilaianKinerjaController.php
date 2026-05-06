@@ -316,7 +316,7 @@ class PenilaianKinerjaController extends Controller
         return back()->with('success', 'status tugas diubah menjadi proses');
     }
 
-    //adminunit
+    // adminunit
     public function showMahasiswa()
     {
         $idUnit = Auth::user()->staffUnit()->pluck('idUnit')->first();
@@ -534,10 +534,20 @@ class PenilaianKinerjaController extends Controller
                     ->where('t.idLowongan', $tugas->idLowongan)
                     ->sum('t.bobotNilai');
 
-                $totalAkhir = 0;
-
+                $nilaiTugas = 0;
                 if ($totalBobot > 0) {
-                    $totalAkhir = ($totalNilai / $totalBobot) * 100;
+                    $nilaiTugas = ($totalNilai / $totalBobot) * 100;
+                }
+
+                $avgForm = DB::table('penilaian_kinerja_form')
+                    ->where('idMahasiswa', $request->idMahasiswa)
+                    ->where('idLowongan', $tugas->idLowongan)
+                    ->avg('total_nilai');
+
+                if ($avgForm !== null) {
+                    $totalAkhir = round(($nilaiTugas + $avgForm) / 2, 2);
+                } else {
+                    $totalAkhir = round($nilaiTugas, 2);
                 }
 
                 // 8. Ambil kategori
@@ -631,7 +641,7 @@ class PenilaianKinerjaController extends Controller
             )
             ->get();
         foreach ($data as $d) {
-            $d->detail = DB::table('tugas_mahasiswa as tm')
+            $d->detailTugas = DB::table('tugas_mahasiswa as tm')
                 ->join('tugas as t', 't.id', '=', 'tm.idTugas')
                 ->leftJoin('penilaian_kinerja as pk', function ($join) use ($d) {
                     $join->on('pk.idTugas', '=', 't.id')
@@ -639,6 +649,7 @@ class PenilaianKinerjaController extends Controller
                 })
                 ->where('tm.idMahasiswa', $d->idMahasiswa)
                 ->where('t.idLowongan', $d->idLowongan)
+                ->whereNotNull('pk.nilaiAkhir')
                 ->select(
                     't.namaTugas',
                     'pk.nilaiAwal',
@@ -648,11 +659,41 @@ class PenilaianKinerjaController extends Controller
                     't.bobotNilai'
                 )
                 ->get();
+            $d->detailForm = DB::table('penilaian_kinerja_form as pf')
+                ->join('staffunit as su', 'su.id', '=', 'pf.idStaffUnit')
+                ->join('users as u', 'u.id', '=', 'su.idUser')
+                ->where('pf.idMahasiswa', $d->idMahasiswa)
+                ->where('pf.idLowongan', $d->idLowongan)
+                ->select(
+                    'pf.id as idForm', 
+                    'u.name as namaStaff',
+                    'pf.total_nilai',
+                    'pf.catatan',
+                    'pf.tanggal_menilai'
+                )
+                ->get();
+            foreach ($d->detailForm as $form) {
+
+                $form->kriteria = DB::table('penilaian_kriteria_form as pkf')
+                    ->join('kriteria_kinerja as kk', 'kk.id', '=', 'pkf.idKriteriaKinerja')
+                    ->where('pkf.idPenilaianForm', $form->idForm)
+                    ->select(
+                        'kk.nama as namaKriteria',
+                        'pkf.nilai'
+                    )
+                    ->get();
+            }
+
+            // Flag ada tidaknya
+            $d->adaTugas = $d->detailTugas->isNotEmpty();
+            $d->adaForm = $d->detailForm->isNotEmpty();
+
         }
 
         return view('penilaiankinerja.halamantotalpenilaian', compact('data'));
     }
-    //penilaian kinerja form
+
+    // penilaian kinerja form
     public function listUnitForm()
     {
         $unitId = Auth::user()->staffUnit()->pluck('idUnit');
@@ -662,4 +703,217 @@ class PenilaianKinerjaController extends Controller
         return view('penilaiankinerjaform.listunit', compact('unit'));
     }
 
+    public function listMahasiswaForm(string $idUnit)
+    {
+        $idStaffUnits = DB::table('staffunit')
+            ->where('idUser', auth()->id())
+            ->where('idUnit', $idUnit)
+            ->value('id');
+
+        $data = DB::table('pendaftaran as p')
+            ->join('mahasiswa as m', 'm.id', '=', 'p.idMahasiswa')
+            ->join('users as u', 'u.id', '=', 'm.idUser')
+            ->join('lowongan as l', 'l.id', '=', 'p.idLowongan')
+            ->where('l.idUnit', $idUnit)
+            ->where('p.statusPendaftaran', 'diterima')
+            ->select(
+                'm.id as idMahasiswa',
+                'u.name',
+                'l.id as idLowongan',
+                'l.judulLowongan',
+                'l.mulaiKerja',
+                'l.akhirKerja',
+                DB::raw("
+                    CASE 
+                        WHEN l.mulaiKerja <= NOW() THEN 'boleh_dinilai'
+                        ELSE 'belum_mulai'
+                    END as status_penilaian
+                ")
+            )
+            ->get();
+
+        foreach ($data as $d) {
+            $d->sudah_dinilai = DB::table('penilaian_kinerja_form')
+                ->where('idMahasiswa', $d->idMahasiswa)
+                ->where('idLowongan', $d->idLowongan)
+                ->where('idStaffUnit', $idStaffUnits)
+                ->exists();
+        }
+
+        return view('penilaiankinerjaform.listmahasiswa', compact('data'));
+    }
+
+    public function showFormPenilaian(string $idMahasiswa, string $idLowongan)
+    {
+        $idUnit = DB::table('lowongan')->where('id', $idLowongan)->value('idUnit');
+
+        $idStaffUnit = DB::table('staffunit')
+            ->where('idUser', auth()->id())
+            ->where('idUnit', $idUnit)
+            ->value('id');
+
+        // di sudah nilai apa belum
+        $sudahDinilai = DB::table('penilaian_kinerja_form')
+            ->where('idMahasiswa', $idMahasiswa)
+            ->where('idLowongan', $idLowongan)
+            ->where('idStaffUnit', $idStaffUnit)
+            ->exists();
+        if ($sudahDinilai) {
+            return redirect()
+                ->back()
+                ->with('error', 'Anda sudah menilai mahasiswa ini.');
+        }
+
+        $mahasiswa = DB::table('mahasiswa as m')
+            ->join('users as u', 'u.id', '=', 'm.idUser')
+            ->where('m.id', $idMahasiswa)
+            ->select('m.id', 'u.name as namaMahasiswa')
+            ->first();
+        $lowongan = DB::table('lowongan as l')
+            ->join('unit as u', 'u.id', '=', 'l.idUnit')
+            ->where('l.id', $idLowongan)
+            ->select('l.id', 'l.judulLowongan', 'l.idUnit', 'u.name as namaUnit')
+            ->first();
+        $kriteria = DB::table('kriteria_kinerja')
+            ->where('idUnit', $lowongan->idUnit)
+            ->where('status', 1)
+            ->get();
+
+        return view('penilaiankinerjaform.formpenilaiankinerja', compact('mahasiswa', 'lowongan', 'kriteria'));
+    }
+
+    public function simpanPenilaianForm(Request $request)
+    {
+        $request->validate([
+            'idMahasiswa' => 'required',
+            'idLowongan' => 'required',
+            'idUnit' => 'required',
+            'nilai' => 'required|array|min:1',
+            'nilai.*' => 'required|numeric|min:0|max:100',
+            'catatan' => 'required|string',
+        ], [
+            'required' => 'Bagian :attribute wajib diisi.',
+            'numeric' => 'Nilai harus berupa angka.',
+            'nilai.*.min' => 'Nilai minimal 0.',
+            'nilai.*.max' => 'Nilai maksimal 100.',
+        ]);
+
+        $idStaffUnit = DB::table('staffunit')
+            ->where('idUser', auth()->id())
+            ->where('idUnit', $request->idUnit)
+            ->value('id');
+        $sudahDinilai = DB::table('penilaian_kinerja_form')
+            ->where('idMahasiswa', $request->idMahasiswa)
+            ->where('idLowongan', $request->idLowongan)
+            ->where('idStaffUnit', $idStaffUnit)
+            ->exists();
+
+        if ($sudahDinilai) {
+            return back()->with('error', 'Anda sudah menilai mahasiswa ini.');
+        }
+
+        try {
+            DB::transaction(function () use ($request, $idStaffUnit) {
+                // ini hitung nilainya rata rata
+                $nilaiArr = array_values($request->nilai);
+                $totalForm = count($nilaiArr) > 0
+                     ? round(array_sum($nilaiArr) / count($nilaiArr), 2)
+                : 0;
+
+                $idPenilaianForm = DB::table('penilaian_kinerja_form')->insertGetId([
+                    'idMahasiswa' => $request->idMahasiswa,
+                    'idLowongan' => $request->idLowongan,
+                    'idStaffUnit' => $idStaffUnit,
+                    'total_nilai' => $totalForm,
+                    'tanggal_menilai' => now(),
+                    'catatan' => $request->catatan,
+                ]);
+
+                $detailInsert = [];
+                foreach ($request->nilai as $idKriteria => $nilai) {
+                    $detailInsert[] = [
+                        'idPenilaianForm' => $idPenilaianForm,
+                        'idKriteriaKinerja' => $idKriteria,
+                        'nilai' => $nilai,
+                    ];
+                }
+                DB::table('penilaian_kriteria_form')->insert($detailInsert);
+
+                // kita bakal rata rata form yang udah dinilai untuk mahasiswa ini di lowongan ini
+                $avgForm = DB::table('penilaian_kinerja_form')
+                    ->where('idMahasiswa', $request->idMahasiswa)
+                    ->where('idLowongan', $request->idLowongan)
+                    ->avg('total_nilai');
+
+                // kemudian kita cek ada kah nilai dari tugas
+                $pendaftaran = DB::table('pendaftaran')
+                    ->where('idMahasiswa', $request->idMahasiswa)
+                    ->where('idLowongan', $request->idLowongan)
+                    ->first();
+
+                $nilaiTugas = null;
+                if ($pendaftaran) {
+                    $totalNilaiTugas = DB::table('penilaian_kinerja as pk')
+                        ->join('tugas as t', 't.id', '=', 'pk.idTugas')
+                        ->where('pk.idMahasiswa', $request->idMahasiswa)
+                        ->where('t.idLowongan', $request->idLowongan)
+                        ->sum('pk.nilaiAkhir');
+
+                    $totalBobotTugas = DB::table('tugas_mahasiswa as tm')
+                        ->join('tugas as t', 't.id', '=', 'tm.idTugas')
+                        ->where('tm.idMahasiswa', $request->idMahasiswa)
+                        ->where('t.idLowongan', $request->idLowongan)
+                        ->sum('t.bobotNilai');
+
+                    if ($totalBobotTugas > 0) {
+                        $nilaiTugas = ($totalNilaiTugas / $totalBobotTugas) * 100;
+                    }
+                }
+
+                if ($nilaiTugas !== null && $avgForm !== null) {
+                    $totalAkhir = round(($nilaiTugas + $avgForm) / 2, 2);
+                } elseif ($avgForm !== null) {
+                    $totalAkhir = round($avgForm, 2);
+                } else {
+                    $totalAkhir = round($nilaiTugas ?? 0, 2);
+                }
+
+                $idUnit = DB::table('lowongan')->where('id', $request->idLowongan)->value('idUnit');
+                $kategori = DB::table('kualitas_kinerja')
+                    ->where('idUnit', $idUnit)
+                    ->where('status', 1)
+                    ->where('nilaiMin', '<=', $totalAkhir)
+                    ->where('nilaiMax', '>=', $totalAkhir)
+                    ->value('kategori');
+                // dd([
+                //     'totalForm' => $totalForm,
+                //     'idPenilaianForm' => $idPenilaianForm,
+                //     'detailInsert' => $detailInsert,
+                //     'avgForm' => $avgForm,
+                //     'pendaftaran' => $pendaftaran,
+                //     'nilaiTugas' => $nilaiTugas,
+                //     'totalAkhir' => $totalAkhir,
+                //     'idUnit' => $idUnit,
+                //     'kategori' => $kategori,
+                // ]);
+
+                if ($pendaftaran) {
+                    DB::table('total_penilaian_kinerja')->updateOrInsert(
+                        ['idPendaftaran' => $pendaftaran->id],
+                        [
+                            'totalNilai' => $totalAkhir,
+                            'kategori' => $kategori,
+                        ]
+                    );
+                }
+            });
+
+            return redirect()
+                ->route('kinerjaform.listmahasiwa', $request->idUnit)
+                ->with('success', 'Penilaian berhasil disimpan');
+
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
 }

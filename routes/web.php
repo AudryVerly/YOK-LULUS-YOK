@@ -167,6 +167,9 @@ Route::middleware(['auth','role:StaffUnit'])->group(function(){
    Route::post('/tugasunit/revisitugas',[PenilaianKinerjaController::class,'kirimRevisi'])->name('tugas.revisitugas');
 
    Route::get('/kinerjaform/listunit',[PenilaianKinerjaController::class,'listUnitForm'])->name('kinerjaform.listunit');
+   Route::get('/kinerjaform/listmahasiswa/{idUnit}',[PenilaianKinerjaController::class, 'listMahasiswaForm'])->name('kinerjaform.listmahasiwa');
+   Route::get('/kinerjaform/penilaian/{idMahasiswa}/{idLowongan}',[PenilaianKinerjaController::class,'showFormPenilaian'])->name('kinerjaform.form');
+   Route::post('/kinerjaform/penilaianform',[PenilaianKinerjaController::class,'simpanPenilaianForm'])->name('kinerjaform.penilaiankinerja');
 });
 
 Route::middleware(['auth','role:SuperAdmin'])->group(function(){
