@@ -303,5 +303,23 @@
 
             });
         });
+
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: "{{ session('success') }}",
+                timer: 2500,
+                showConfirmButton: false
+            });
+        @elseif (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: "{{ session('error') }}",
+                timer: 2500,
+                showConfirmButton: false
+            });
+        @endif
     </script>
 @endpush
