@@ -7,9 +7,20 @@
             <h4 class="fw-bold mb-1">List Mahasiswa</h4>
             <small class="text-muted">Pilih mahasiswa untuk melakukan penilaian kinerja</small>
         </div>
-        <div class="row g-4">
+        <div class="row mb-4 g-3">
+            <div class="col-md-4">
+                <input type="text" id="searchMahasiswa" class="form-control border rounded-3 shadow-sm px-3 py-2"
+                    placeholder="Cari Nama Mahasiswa">
+            </div>
+
+            <div class="col-md-4">
+                <input type="text" id="searchLowongan" class="form-control border rounded-3 shadow-sm px-3 py-2"
+                    placeholder="Cari Lowongan">
+            </div>
+        </div>
+        <div class="row g-4" id="mahasiswaContainer">
             @forelse($data as $d)
-                <div class="col-xl-4 col-md-6">
+                <div class="col-xl-4 col-md-6 mahasiswa-item">
 
                     <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
 
@@ -79,7 +90,7 @@
 
                                 </div>
 
-                            </div> 
+                            </div>
 
                             <p class="text-muted small mb-3">
                                 Kandidat dalam unit ini dapat dinilai berdasarkan performa kerja selama periode aktif.
@@ -88,7 +99,8 @@
                             {{-- BUTTON --}}
                             @if ($d->status_penilaian == 'boleh_dinilai')
                                 @if (!$d->sudah_dinilai)
-                                    <a href="{{ route('kinerjaform.form',[$d->idMahasiswa,$d->idLowongan]) }}" class="btn btn-success w-100 rounded-pill">
+                                    <a href="{{ route('kinerjaform.form', [$d->idMahasiswa, $d->idLowongan]) }}"
+                                        class="btn btn-success w-100 rounded-pill">
                                         Mulai Penilaian
                                     </a>
                                 @else
@@ -115,5 +127,93 @@
                 </div>
             @endforelse
         </div>
+        <div class="d-flex justify-content-center mt-4">
+            <div id="pagination-container"></div>
+        </div>
     </div>
 @endsection
+@push('scripts')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplePagination.js/1.6/simplePagination.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplePagination.js/1.6/jquery.simplePagination.min.js"></script>
+    <script>
+        $(document).ready(function() {
+
+            let items = $('.mahasiswa-item');
+            let perPage = 6;
+
+            function showPage(pageNumber) {
+
+                let visibleItems = items.filter(function() {
+                    return $(this).css('display') !== 'none';
+                });
+
+                items.hide();
+
+                let showFrom = perPage * (pageNumber - 1);
+                let showTo = showFrom + perPage;
+
+                visibleItems.slice(showFrom, showTo).show();
+            }
+
+            function setupPagination() {
+
+                let visibleItems = items.filter(function() {
+                    return $(this).css('display') !== 'none';
+                });
+
+                $('#pagination-container').pagination('destroy');
+
+                $('#pagination-container').pagination({
+                    items: visibleItems.length,
+                    itemsOnPage: perPage,
+
+                    prevText: "&laquo;",
+                    nextText: "&raquo;",
+
+                    cssStyle: '',
+
+                    onPageClick: function(pageNumber) {
+                        showPage(pageNumber);
+                    }
+                });
+
+                showPage(1);
+            }
+
+            function filterMahasiswa() {
+
+                let keywordMahasiswa = $('#searchMahasiswa').val().toLowerCase().trim();
+                let keywordLowongan = $('#searchLowongan').val().toLowerCase().trim();
+
+                items.each(function() {
+
+                    let nama = $(this).find('h6').text().toLowerCase().trim();
+
+                    let lowongan = $(this).find('.text-light')
+                        .text()
+                        .toLowerCase()
+                        .trim();
+
+                    let matchMahasiswa = nama.includes(keywordMahasiswa);
+
+                    let matchLowongan = lowongan.includes(keywordLowongan);
+
+                    if (matchMahasiswa && matchLowongan) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+
+                });
+
+                setupPagination();
+            }
+
+            setupPagination();
+
+            $('#searchMahasiswa').on('keyup', filterMahasiswa);
+            $('#searchLowongan').on('keyup', filterMahasiswa);
+        });
+    </script>
+@endpush

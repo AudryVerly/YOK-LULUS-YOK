@@ -105,7 +105,7 @@
             </div>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4" id="lowonganContainer">
             @if ($lowongan->count() > 0)
                 @foreach ($lowongan as $low)
                     <div class="col-lg-4 col-md-6 col-sm-12 lowongan-item" data-kualifikasi="{{ $low->kualifikasi }}">
@@ -208,6 +208,9 @@
                 </div>
             @endif
         </div>
+        <div class="d-flex justify-content-center mt-4">
+            <div id="pagination-container"></div>
+        </div>
     </div>
 @endsection
 @push('modals')
@@ -267,6 +270,10 @@
 @endpush
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/simplePagination.js/1.6/simplePagination.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplePagination.js/1.6/jquery.simplePagination.min.js"></script>
     @if (session('error'))
         <script>
             $(document).ready(function() {
@@ -331,34 +338,82 @@
     </script>
 
     <script>
-        function filterLowongan() {
-            let keyword = $('#searchLowongan').val().toLowerCase()
-            let unit = $('#filterUnit').val().toLowerCase()
-            let kualifikasiKeyword = $('#searchKualifikasi').val().toLowerCase()
+        $(document).ready(function() {
+            let items = $('.lowongan-item');
+            let perPage = 6;
+
+            function showPage(pageNumber) {
+
+                let visibleItems = items.filter(function() {
+                    return $(this).css('display') !== 'none';
+                });
+
+                items.hide();
+
+                let showFrom = perPage * (pageNumber - 1);
+                let showTo = showFrom + perPage;
+
+                visibleItems.slice(showFrom, showTo).show();
+            }
+
+            function setupPagination() {
+
+                let visibleItems = items.filter(function() {
+                    return $(this).css('display') !== 'none';
+                });
+
+                $('#pagination-container').pagination('destroy');
+
+                $('#pagination-container').pagination({
+                    items: visibleItems.length,
+                    itemsOnPage: perPage,
+
+                    prevText: "&laquo;",
+                    nextText: "&raquo;",
+
+                    cssStyle: '',
+
+                    onPageClick: function(pageNumber) {
+                        showPage(pageNumber);
+                    }
+                });
+
+                showPage(1);
+            }
+
+            function filterLowongan() {
+                let keyword = $('#searchLowongan').val().toLowerCase()
+                let unit = $('#filterUnit').val().toLowerCase()
+                let kualifikasiKeyword = $('#searchKualifikasi').val().toLowerCase()
 
 
-            $('.lowongan-item').each(function() {
-                //ini yang dipakai di keyword
-                let judul = $(this).find('.judul-lowongan').text().toLowerCase()
-                let cardUnit = $(this).find('.unit-lowongan').text().toLowerCase()
-                let kualifikasi = $(this).data('kualifikasi').toLowerCase() || ''
+                items.each(function() {
+                    //ini yang dipakai di keyword
+                    let judul = $(this).find('.judul-lowongan').text().toLowerCase()
+                    let cardUnit = $(this).find('.unit-lowongan').text().toLowerCase()
+                    let kualifikasi = $(this).data('kualifikasi').toLowerCase() || ''
 
-                //ini biar apakah dari lowongan ini ada kareba kita pakai nama lowongan
-                let matchkeyword = judul.includes(keyword) || cardUnit.includes(keyword)
-                let matchKualifikasi = kualifikasi.includes(kualifikasiKeyword)
-                let matchUnit = unit === '' || cardUnit.includes(unit)
+                    //ini biar apakah dari lowongan ini ada kareba kita pakai nama lowongan
+                    let matchkeyword = judul.includes(keyword) || cardUnit.includes(keyword)
+                    let matchKualifikasi = kualifikasi.includes(kualifikasiKeyword)
+                    let matchUnit = unit === '' || cardUnit.includes(unit)
 
-                if (matchkeyword && matchUnit && matchKualifikasi) {
-                    $(this).show()
-                } else {
-                    $(this).hide()
-                }
+                    if (matchkeyword && matchUnit && matchKualifikasi) {
+                        $(this).show()
+                    } else {
+                        $(this).hide()
+                    }
 
-            });
-        }
+                });
 
-        $('#searchLowongan').on('keyup', filterLowongan)
-        $('#filterUnit').on('change', filterLowongan)
-        $('#searchKualifikasi').on('keyup', filterLowongan)
+                setupPagination();
+            }
+
+            setupPagination();
+
+            $('#searchLowongan').on('keyup', filterLowongan)
+            $('#filterUnit').on('change', filterLowongan)
+            $('#searchKualifikasi').on('keyup', filterLowongan)
+        });
     </script>
 @endpush

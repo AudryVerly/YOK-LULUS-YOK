@@ -366,6 +366,7 @@ class PenilaianKinerjaController extends Controller
                 'tm.tanggalPengumpulan',
                 'tm.file_path',
                 'pk.catatan',
+                'pk.nilaiAwal',
                 'pk.penalti',
                 'pk.nilaiAkhir'
             )
@@ -622,6 +623,11 @@ class PenilaianKinerjaController extends Controller
 
     public function listpenilaiankinerja()
     {
+
+        $units = DB::table('unit')
+            ->orderBy('name')
+            ->where('status', 1)
+            ->get();
         $data = DB::table('total_penilaian_kinerja as tp')
             ->join('pendaftaran as p', 'p.id', '=', 'tp.idPendaftaran')
             ->join('mahasiswa as m', 'm.id', '=', 'p.idMahasiswa')
@@ -665,7 +671,7 @@ class PenilaianKinerjaController extends Controller
                 ->where('pf.idMahasiswa', $d->idMahasiswa)
                 ->where('pf.idLowongan', $d->idLowongan)
                 ->select(
-                    'pf.id as idForm', 
+                    'pf.id as idForm',
                     'u.name as namaStaff',
                     'pf.total_nilai',
                     'pf.catatan',
@@ -690,7 +696,7 @@ class PenilaianKinerjaController extends Controller
 
         }
 
-        return view('penilaiankinerja.halamantotalpenilaian', compact('data'));
+        return view('penilaiankinerja.halamantotalpenilaian', compact('data', 'units'));
     }
 
     // penilaian kinerja form

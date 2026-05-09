@@ -13,15 +13,20 @@
                     placeholder="Cari Lowongan">
             </div>
             <div class="col-md-3">
-                <div class="input-group input-group-outline">
-                    <input type="text" class="form-control border rounded-3 shadow-sm px-3 py-2" id="searchUnit"
-                        placeholder="Cari unit">
-                </div>
+                <select id="searchUnit" class="form-select border rounded-3 shadow-sm px-3 py-2">
+                    <option value="">Semua Unit</option>
+
+                    @foreach ($units as $unit)
+                        <option value="{{ strtolower($unit->name) }}">
+                            {{ $unit->name }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
         </div>
-        <div class="row">
+        <div class="row" id="cardContainer">
             @foreach ($data as $d)
-                <div class="col-md-6 col-xl-4 mb-4">
+                <div class="col-md-6 col-xl-4 mb-4 card-item">
                     <div class="card shadow-lg border-0 h-100 d-flex flex-column">
                         <div class="card-header bg-gradient-dark text-white">
                             <h6 class="mb-0 fw-bold text-white">{{ $d->namaMahasiswa }}</h6>
@@ -72,7 +77,7 @@
                             <small class="text-muted">
                                 Dihitung dari:
                                 @if ($d->adaTugas && $d->adaForm)
-                                   totalAkhir -> (rataTugas + rataForm) / 2
+                                    totalAkhir -> (rataTugas + rataForm) / 2
                                 @elseif ($d->adaTugas)
                                     nilai tugas saja
                                 @else
@@ -83,6 +88,9 @@
                     </div>
                 </div>
             @endforeach
+        </div>
+        <div class="d-flex justify-content-center mt-4">
+            <div id="pagination-container"></div>
         </div>
     </div>
 @endsection
@@ -254,8 +262,39 @@
     @endforeach
 @endpush
 @push('scripts')
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/simplePagination.js/1.6/simplePagination.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplePagination.js/1.6/jquery.simplePagination.min.js"></script>
     <script>
         $(document).ready(function() {
+            let items = $('.card-item');
+            let perPage = 6;
+
+            function showPage(pageNumber) {
+
+                let showFrom = perPage * (pageNumber - 1);
+                let showTo = showFrom + perPage;
+
+                items.hide().slice(showFrom, showTo).show();
+            }
+
+            $('#pagination-container').pagination({
+                items: items.length,
+                itemsOnPage: perPage,
+
+                prevText: "&laquo;",
+                nextText: "&raquo;",
+
+                cssStyle: '',
+
+                onPageClick: function(pageNumber) {
+                    showPage(pageNumber);
+                }
+            });
+
+            $('#pagination-container').pagination('selectPage', 1);
+
             function filterData() {
 
                 let kandidat = $('#searchKandidat').val().toLowerCase().trim();
@@ -279,7 +318,7 @@
 
                     let cocokMahasiswa = namaMahasiswa.includes(kandidat);
                     let cocokLowongan = namaLowongan.includes(lowongan);
-                    let cocokUnit = namaUnit.includes(unit);
+                   let cocokUnit = unit === '' || namaUnit.includes(unit);
 
                     if (cocokMahasiswa && cocokLowongan && cocokUnit) {
                         card.show();
@@ -293,7 +332,8 @@
 
             $('#searchKandidat').on('keyup', filterData);
             $('#searchLowongan').on('keyup', filterData);
-            $('#searchUnit').on('keyup', filterData);
+            $('#searchUnit').on('change', filterData);
+
         });
     </script>
 @endpush

@@ -37,6 +37,8 @@
                                 <th class="text-uppercase text-body-secondary text-xxs font-weight-bolder opacity-7"
                                     style="text-align: center;">Catatan</th>
                                 <th class="text-uppercase text-body-secondary text-xxs font-weight-bolder opacity-7"
+                                    style="text-align: center;">Nilai</th>
+                                <th class="text-uppercase text-body-secondary text-xxs font-weight-bolder opacity-7"
                                     style="text-align: center;">Penalti</th>
                                 <th class="text-uppercase text-body-secondary text-xxs font-weight-bolder opacity-7"
                                     style="text-align: center;">Nilai Akhir</th>
@@ -65,8 +67,14 @@
                                         @endif
                                     </td>
                                     <td class="text-sm" style="text-align: center;">{{ $t->catatan ?? '-' }}</td>
+                                    <td class="text-sm" style="text-align: center;">{{ $t->nilaiAwal ?? '-' }}</td>
                                     <td class="text-sm" style="text-align: center;">{{ $t->penalti ?? '-' }}</td>
-                                    <td class="text-sm" style="text-align: center;">{{ $t->nilaiAkhir ?? '-' }}</td>
+                                    <td class="text-sm" style="text-align: center;">{{ $t->nilaiAkhir ?? '-' }}
+                                        <div class="text-xs text-secondary">
+                                            ({{ $t->nilaiAwal }} - {{ $t->penalti }})
+                                            x {{ $t->bobotNilai }}%
+                                        </div>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
