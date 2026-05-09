@@ -3,6 +3,7 @@
 use App\Http\Controllers\AHPController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardAdminUnitController;
+use App\Http\Controllers\DashboardSuperAdminController;
 use App\Http\Controllers\DashboardMahasiswaController;
 use App\Http\Controllers\DashboardStaffUnitController;
 use App\Http\Controllers\FormulirController;
@@ -173,7 +174,7 @@ Route::middleware(['auth','role:StaffUnit'])->group(function(){
 });
 
 Route::middleware(['auth','role:SuperAdmin'])->group(function(){
-    Route::get('/dashboard', function () {return view('dashboard');})->name('superadmin.dashboard');
+    Route::get('/dashboard',[DashboardSuperAdminController::class,'index'])->name('superadmin.dashboard');
 
     //routing master user
     Route::get('/users',[UserController::class,'index'])->name('users.index');
