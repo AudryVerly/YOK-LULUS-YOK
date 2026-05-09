@@ -165,27 +165,25 @@ class KandidatPendaftaranController extends Controller
                 $tahap->updated_at = null;
                 $tahap->progress_id = null;
             }
-
-            $tahap->jadwal = DB::table('jadwal_wawancara')
-                ->where('idProgressTahapan', $tahap->progress_id)
-                ->first();
         }
+        $jumlahJadwalWawancara = DB::table('jadwal_wawancara')
+            ->where('idPendaftaran', $idPendaftaran)
+            ->count();
 
-        return view('kandidatPendaftaran.detailProgressKandidat', compact('detailKandidat', 'jawabanFormulir', 'berkasPendaftaran', 'tahapan', 'batasPendaftaran'));
+        $isFinal = in_array($detailKandidat->statusPendaftaran, ['Diterima', 'Ditolak']);
+
+        $isWawancara = $tahapan->contains(fn ($t) => $t->tipe_tahap === 'Wawancara');
+
+        return view('kandidatPendaftaran.detailProgressKandidat', compact('detailKandidat', 'jawabanFormulir', 'berkasPendaftaran', 'tahapan', 'batasPendaftaran', 'jumlahJadwalWawancara', 'isFinal', 'isWawancara'));
     }
 
     // jadi ini bakal update status dari pendaftaran
     // juga bakal insert progress kandidat
     public function updateStatusDaftar(string $idPendaftaran, Request $request)
     {
-        // ini harus pakai transaction karena dia ada 2 kasus sekaligus
-        DB::transaction(function () use ($idPendaftaran, $request) {
+        try {
 
             $pendaftaran = Pendaftaran::findOrFail($idPendaftaran);
-
-            // $lowongan = DB::table('lowongan')
-            //             ->where('id', $pendaftaran->idLowongan)
-            //             ->first();
 
             if (! $this->penilaianDimulai($pendaftaran->idLowongan)) {
                 return back()->with('error', 'Penilaian belum bisa dimulai sebelum pendaftaran ditutup');
@@ -200,42 +198,64 @@ class KandidatPendaftaranController extends Controller
                 ->whereDate('l.akhirKerja', '>=', now())
                 ->exists();
 
-            // kalau udah keterima lowongan lain
-            if ($terimalowonganLain) {
+            $ditolak = false;
+
+            DB::transaction(function () use ($pendaftaran, $terimalowonganLain, &$ditolak) {
+
+                if ($terimalowonganLain) {
+
+                    $catatan = 'Mohon maaf, Anda belum dapat melanjutkan proses seleksi.';
+
+                    $pendaftaran->update([
+                        'statusPendaftaran' => 'ditolak',
+                    ]);
+
+                    DB::table('progress_tahapan_kandidat')
+                        ->where('idPendaftaran', $pendaftaran->id)
+                        ->update([
+                            'status' => 'Gagal',
+                            'catatan' => $catatan,
+                            'updated_at' => now(),
+                        ]);
+
+                    $ditolak = true;
+
+                    return;
+                }
+
                 $pendaftaran->update([
-                    'statusPendaftaran' => 'ditolak',
+                    'statusPendaftaran' => 'diproses',
                 ]);
 
-                return;
+                $tahapPertama = DB::table('tahap_rekrutmen')
+                    ->where('idLowongan', $pendaftaran->idLowongan)
+                    ->where('status', 1)
+                    ->orderBy('urutan', 'asc')
+                    ->first();
+
+                if ($tahapPertama) {
+                    DB::table('progress_tahapan_kandidat')->insert([
+                        'idTahapRekrutmen' => $tahapPertama->id,
+                        'idPendaftaran' => $pendaftaran->id,
+                        'status' => 'Proses',
+                        'catatan' => '',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+
+            });
+
+            if ($ditolak) {
+                return back()->with('error', 'Mohon maaf, Anda tidak dapat melanjutkan seleksi.');
             }
 
-            // benerin nanti
-            $request->validate([
-                'catatan' => 'required|string',
-            ]);
+            // kalau sukses
+            return back()->with('successProses', 'Proses Kandidat dimulai');
 
-            $pendaftaran->update([
-                'statusPendaftaran' => 'diproses',
-            ]);
-
-            // kita harus ambil tahapan di urutan pertama
-            $tahapPertama = TahapRekrutmen::where('idLowongan', $pendaftaran->idLowongan)
-                ->where('status', 1)
-                ->orderBy('urutan', 'asc')
-                ->first();
-
-            if ($tahapPertama) {
-                ProgressTahapanKandidat::create([
-                    'idTahapRekrutmen' => $tahapPertama->id,
-                    'idPendaftaran' => $idPendaftaran,
-                    'status' => 'Proses',
-                    'catatan' => '',
-                ]);
-            }
-
-        });
-
-        return back()->with('successProses', 'Proses Kandidat dimulai');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Terjadi kesalahan sistem');
+        }
 
     }
 

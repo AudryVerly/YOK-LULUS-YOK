@@ -183,7 +183,7 @@
                                                     <textarea name="catatan" class="form-control rounded-4 shadow-sm" rows="2"
                                                         placeholder="Masukkan catatan untuk tahap ini..." {{ !$penilaianStart ? 'disabled' : '' }}></textarea>
                                                 </div>
-                                                <div class="d-flex gap-2 flex-wrap">
+                                                <div class="d-flex gap-2 flex-wrap mt-2">
                                                     @if (!$penilaianStart)
                                                         <span data-bs-toggle="tooltip"
                                                             title="Penilaian belum dibuka, karena belum melewati batas pendaftaran">
@@ -218,26 +218,32 @@
                                                             Gagal
                                                         </button>
                                                     @endif
-                                                    @if ($tahap->tipe_tahap == 'Wawancara' && in_array($tahap->status, ['Proses', 'Lulus']))
-                                                        <div class="mt-2">
-                                                            @if ($penilaianStart)
+                                                    @if ($tahap->tipe_tahap == 'Wawancara')
+                                                        @if (!$isWawancara || !$penilaianStart || $isFinal)
+                                                            <button class="btn btn-secondary btn-sm px-3" disabled>
+                                                                Wawancara
+                                                            </button>
+                                                        @else
+                                                            {{-- kalau belum pernah ada jadwal --}}
+                                                            @if ($jumlahJadwalWawancara == 0)
                                                                 <a href="{{ route('kandidat.wawancara', [
                                                                     'idProgressTahapan' => $tahap->progress_id,
                                                                     'idPendaftaran' => $detailKandidat->idPendaftaran,
                                                                 ]) }}"
                                                                     class="btn btn-info btn-sm px-3">
-                                                                    <i class="bi bi-calendar-event me-1"></i> Set Wawancara
+                                                                    Set Wawancara
                                                                 </a>
                                                             @else
-                                                                <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                    title="Jadwal wawancara hanya bisa dibuat setelah pendaftaran ditutup">
-                                                                    <button class="btn btn-secondary btn-sm px-3" disabled>
-                                                                        <i class="bi bi-calendar-event me-1"></i> Set
-                                                                        Wawancara
-                                                                    </button>
-                                                                </span>
+                                                                {{-- kalau sudah ada jadwal, tetap boleh tambah --}}
+                                                                <a href="{{ route('kandidat.wawancara', [
+                                                                    'idProgressTahapan' => $tahap->progress_id,
+                                                                    'idPendaftaran' => $detailKandidat->idPendaftaran,
+                                                                ]) }}"
+                                                                    class="btn btn-warning btn-sm px-3">
+                                                                    Edit / Tambah Wawancara
+                                                                </a>
                                                             @endif
-                                                        </div>
+                                                        @endif
                                                     @endif
                                                 </div>
                                             </form>
