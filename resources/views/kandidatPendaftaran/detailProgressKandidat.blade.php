@@ -2,7 +2,7 @@
 @section('breadcrumb', 'Detail Kandidat')
 
 @php
-    $penilaianStart = now()->gt($batasPendaftaran);
+    $penilaianStart = $batasPendaftaran ? now()->gt(\Carbon\Carbon::parse($batasPendaftaran)->endOfDay()) : false;
 @endphp
 
 @section('content')
@@ -218,26 +218,26 @@
                                                             Gagal
                                                         </button>
                                                     @endif
-
-                                                    @if ($tahap->tipe_tahap == 'Wawancara')
-                                                        @if ($penilaianStart)
-                                                            <a href="{{ route('kandidat.wawancara', [
-                                                                'idProgressTahapan' => $tahap->progress_id,
-                                                                'idPendaftaran' => $detailKandidat->idPendaftaran,
-                                                            ]) }}"
-                                                                class="btn btn-info btn-sm px-3">
-                                                                Set Wawancara
-                                                            </a>
-                                                        @else
-                                                            <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Jadwal wawancara hanya bisa dibuat setelah pendaftaran ditutup">
-
-                                                                <button class="btn btn-secondary btn-sm px-3" disabled>
-                                                                    Set Wawancara
-                                                                </button>
-
-                                                            </span>
-                                                        @endif
+                                                    @if ($tahap->tipe_tahap == 'Wawancara' && in_array($tahap->status, ['Proses', 'Lulus']))
+                                                        <div class="mt-2">
+                                                            @if ($penilaianStart)
+                                                                <a href="{{ route('kandidat.wawancara', [
+                                                                    'idProgressTahapan' => $tahap->progress_id,
+                                                                    'idPendaftaran' => $detailKandidat->idPendaftaran,
+                                                                ]) }}"
+                                                                    class="btn btn-info btn-sm px-3">
+                                                                    <i class="bi bi-calendar-event me-1"></i> Set Wawancara
+                                                                </a>
+                                                            @else
+                                                                <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                    title="Jadwal wawancara hanya bisa dibuat setelah pendaftaran ditutup">
+                                                                    <button class="btn btn-secondary btn-sm px-3" disabled>
+                                                                        <i class="bi bi-calendar-event me-1"></i> Set
+                                                                        Wawancara
+                                                                    </button>
+                                                                </span>
+                                                            @endif
+                                                        </div>
                                                     @endif
                                                 </div>
                                             </form>

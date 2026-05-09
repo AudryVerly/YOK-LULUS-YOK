@@ -165,6 +165,10 @@ class KandidatPendaftaranController extends Controller
                 $tahap->updated_at = null;
                 $tahap->progress_id = null;
             }
+
+            $tahap->jadwal = DB::table('jadwal_wawancara')
+                ->where('idProgressTahapan', $tahap->progress_id)
+                ->first();
         }
 
         return view('kandidatPendaftaran.detailProgressKandidat', compact('detailKandidat', 'jawabanFormulir', 'berkasPendaftaran', 'tahapan', 'batasPendaftaran'));
@@ -201,10 +205,11 @@ class KandidatPendaftaranController extends Controller
                 $pendaftaran->update([
                     'statusPendaftaran' => 'ditolak',
                 ]);
+
                 return;
             }
-        
-            //benerin nanti
+
+            // benerin nanti
             $request->validate([
                 'catatan' => 'required|string',
             ]);
@@ -322,6 +327,6 @@ class KandidatPendaftaranController extends Controller
             return false;
         }
 
-        return now()->gt($batasPendaftaran);
+        return now()->gt(\Carbon\Carbon::parse($batasPendaftaran)->endOfDay());
     }
 }

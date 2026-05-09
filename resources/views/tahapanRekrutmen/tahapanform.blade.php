@@ -15,7 +15,7 @@
                             <div class="d-flex gap-2">
                                 <button class="btn bg-white text-dark border shadow-sm" data-bs-toggle="modal"
                                     data-bs-target="#modaladdtahapan" data-id-lowongan="{{ $lowongan->id }}"
-                                    {{ now()->gt($lowongan->batasPendaftaran) ? 'disabled' : '' }}>
+                                    {{ now()->gt(\Carbon\Carbon::parse($lowongan->batasPendaftaran)->endOfDay()) ? 'disabled' : '' }}>
                                     <i class="material-symbols-rounded text-sm align-middle text-success">add</i>
                                     <span class="align-middle fw-bold">Tambah Tahapan</span>
                                 </button>
@@ -76,14 +76,14 @@
                                                             <input type="checkbox" id="toggle-{{ $tahap->id }}"
                                                                 class="tahap-toggle-input" data-id="{{ $tahap->id }}"
                                                                 {{ $tahap->status == 1 ? 'checked' : '' }}
-                                                                {{ now()->gt($lowongan->batasPendaftaran) || $isLocked ? 'disabled' : '' }}>
+                                                                {{  now()->gt(\Carbon\Carbon::parse($lowongan->batasPendaftaran)->endOfDay()) || $isLocked ? 'disabled' : '' }}>
                                                             <label for="toggle-{{ $tahap->id }}"
                                                                 class="tahap-toggle-label"></label>
                                                         </div>
 
                                                         @php
                                                             $dipakai = $tahap->progressTahapanRekrutmen->count() > 0;
-                                                            $pendaftaranTutup = now()->gt($lowongan->batasPendaftaran);
+                                                            $pendaftaranTutup =  now()->gt(\Carbon\Carbon::parse($lowongan->batasPendaftaran)->endOfDay());
                                                         @endphp
 
                                                         <button type="button" class="btnedit btn btn-secondary btn-sm"
