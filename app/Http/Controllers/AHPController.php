@@ -32,7 +32,7 @@ class AHPController extends Controller
 
         $isLocked = DB::table('lowongan')
             ->where('idUnit', $idUnit)
-            ->whereDate('batasPendaftaran','<', $today )
+            ->whereDate('batasPendaftaran', '<', $today)
             ->whereDate('mulaiKerja', '>', $today)
             ->exists();
 
@@ -48,7 +48,7 @@ class AHPController extends Controller
 
         $isLocked = DB::table('lowongan')
             ->where('idUnit', $idUnit)
-             ->whereDate('batasPendaftaran','<', $today )
+            ->whereDate('batasPendaftaran', '<', $today)
             ->whereDate('mulaiKerja', '>=', $today)
             ->exists();
 
@@ -81,7 +81,7 @@ class AHPController extends Controller
 
         foreach ($allKriteria as $i) {
             foreach ($allKriteria as $j) {
-                if (!isset($matrix[$i][$j])) {
+                if (! isset($matrix[$i][$j])) {
                     $matrix[$i][$j] = ($i == $j) ? 1 : 0;
                 }
             }
@@ -149,6 +149,7 @@ class AHPController extends Controller
         $CR = $RI[$n] != 0 ? $CI / $RI[$n] : 0;
         $isConsistent = $CR < 0.1;
 
+        //ini misalnya kek bobotnya 0.000099
         $isBobotValid = abs($totalBobot - 1) < 0.01;
 
         if (! $isConsistent) {
@@ -171,15 +172,17 @@ class AHPController extends Controller
 
         // simpan pairwise
         // ini delete supaya data pairwise di id itu tidak duplikat
-        PairwiseComparison::where('idUnit', $idUnit)->delete();
-
         foreach ($data as $item) {
-            PairwiseComparison::create([
-                'idUnit' => $idUnit,
-                'kriteriaAwal' => $item['kriteria1'],
-                'kriteriaPembanding' => $item['kriteria2'],
-                'nilai' => $item['nilai'],
-            ]);
+            PairwiseComparison::updateOrCreate(
+                [
+                    'idUnit' => $idUnit,
+                    'kriteriaAwal' => $item['kriteria1'],
+                    'kriteriaPembanding' => $item['kriteria2'],
+                ],
+                [
+                    'nilai' => $item['nilai'],
+                ]
+            );
         }
 
         // ini tinggal di update aja sesuai idkriteria dan idUnit
