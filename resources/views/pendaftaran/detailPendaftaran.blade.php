@@ -162,7 +162,7 @@
                             </div>
                         @endforeach
                     </div>
-                    @if ($pendaftaran->statusPendaftaran == 'diterima' && $summaryPenilaian && $summaryPenilaian->jumlahPenilai > 0)
+                    @if ($summaryPenilaian && $summaryPenilaian->jumlahPenilai > 0)
                         <div class="card shadow-sm border-0" style="border-radius:16px;">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
