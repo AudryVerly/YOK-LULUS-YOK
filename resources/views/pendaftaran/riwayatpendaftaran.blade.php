@@ -72,7 +72,7 @@
                                                     @if ($riwayat->statusPendaftaran == 'diterima' && !empty($riwayat->file_path))
                                                         <a href="{{ asset('storage/' . $riwayat->file_path) }}" target="_blank"
                                                             class="btn btn-sm btn-primary">
-                                                            👁️ Lihat
+                                                            Lihat Surat
                                                         </a>
                                                     @else
                                                         <span class="text-muted">-</span>

@@ -158,9 +158,43 @@
                                         @endif
                                     </div>
                                 </div>
+
                             </div>
                         @endforeach
                     </div>
+                    @if ($pendaftaran->statusPendaftaran == 'diterima' && $summaryPenilaian && $summaryPenilaian->jumlahPenilai > 0)
+                        <div class="card shadow-sm border-0" style="border-radius:16px;">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                                    <div>
+                                        <h5 class="fw-bold mb-1">
+                                            Hasil Penilaian Kandidat
+                                        </h5>
+
+                                        <p class="text-muted small mb-0">
+                                            Kandidat telah mendapatkan hasil evaluasi dari penilai.
+                                        </p>
+                                    </div>
+
+                                    <div class="text-end">
+                                        <h2 class="fw-bold text-info mb-0">
+                                            {{ number_format($summaryPenilaian->nilaiAkhir, 2) }}
+                                        </h2>
+
+                                        <small class="text-muted">
+                                            {{ $summaryPenilaian->jumlahPenilai }} Penilai
+                                        </small>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="text-end">
+                                    <a href="{{ route('riwayatpendaftaran.nilai',$pendaftaran->id) }}" class="btn btn-dark btn-sm">
+                                        Lihat Detail Penilaian
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

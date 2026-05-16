@@ -263,8 +263,8 @@ class PendaftaranController extends Controller
             }
         }
 
-        //ini buat kandidat yang ketolak dari awal, karena memang udah keterima dilowongan lain
-        //atau yang belum sama sekali masuk lowongan
+        // ini buat kandidat yang ketolak dari awal, karena memang udah keterima dilowongan lain
+        // atau yang belum sama sekali masuk lowongan
         if (! $tahapanBerprogress) {
             if ($pendaftaran->statusPendaftaran == 'ditolak') {
                 $tahapIni = 'Tidak Lolos / Sudah Diterima di Lowongan Lain';
@@ -273,6 +273,95 @@ class PendaftaranController extends Controller
             }
         }
 
-        return view('pendaftaran.detailPendaftaran', compact('pendaftaran', 'tahapan', 'tahapIni'));
+        $summaryPenilaian = DB::table('wawancara_penilai as wp')
+            ->leftJoin('penilaian_kandidat as pk', 'pk.idWawancaraPenilai', '=', 'wp.id')
+            ->join('jadwal_wawancara as jw', 'jw.id', '=', 'wp.idJadwalWawancara')
+            ->where('jw.idPendaftaran', $idPendaftaran)
+            ->where('wp.status', 'sudah')
+            ->whereNotNull('pk.nilaiFinal')
+            ->select(
+                DB::raw('AVG(pk.nilaiFinal) as nilaiAkhir'),
+                DB::raw('COUNT(pk.id) as jumlahPenilai')
+            )
+            ->first();
+
+        return view('pendaftaran.detailPendaftaran', compact('pendaftaran', 'tahapan', 'tahapIni', 'summaryPenilaian'));
+    }
+
+    public function showDetailPenilaian(string $idPendaftaran)
+    {
+        $idMahasiswa = auth()->user()->mahasiswa->id;
+
+        $kandidat = DB::table('pendaftaran as p')
+            ->join('mahasiswa as m', 'p.idMahasiswa', '=', 'm.id')
+            ->join('users as u', 'u.id', '=', 'm.idUser')
+            ->join('lowongan as l', 'p.idLowongan', '=', 'l.id')
+            ->where('p.id', $idPendaftaran)
+            ->where('p.idMahasiswa', $idMahasiswa)
+            ->select(
+                'p.id',
+                'u.name as namaKandidat',
+                'l.judulLowongan',
+                'l.posisiLowongan',
+                'p.statusPendaftaran'
+            )
+            ->first();
+
+        if (! $kandidat) {
+            abort(404);
+        }
+
+        if ($kandidat->statusPendaftaran != 'diterima') {
+            abort(403);
+        }
+
+        $penilaian = DB::table('wawancara_penilai as wp')
+            ->leftJoin('penilaian_kandidat as pk', 'pk.idWawancaraPenilai', '=', 'wp.id')
+            ->join('jadwal_wawancara as jw', 'jw.id', '=', 'wp.idJadwalWawancara')
+            ->join('staffUnit as sf', 'wp.idStaffUnit', '=', 'sf.id')
+            ->join('users as u', 'sf.idUser', '=', 'u.id')
+            ->where('jw.idPendaftaran', $idPendaftaran)
+            ->where('wp.status', 'sudah')
+            ->whereNotNull('pk.nilaiFinal')
+            ->select(
+                'wp.id as idWawancaraPenilai',
+                'pk.id as idPenilaian',
+                'pk.nilaiFinal',
+                'pk.catatan',
+                'u.name as namaPenilai',
+                'jw.tanggal_wawancara',
+            )
+            ->get();
+        $summary = DB::table('wawancara_penilai as wp')
+        ->leftJoin('penilaian_kandidat as pk', 'pk.idWawancaraPenilai', '=', 'wp.id')
+        ->join('jadwal_wawancara as jw', 'jw.id', '=', 'wp.idJadwalWawancara')
+        ->where('jw.idPendaftaran', $idPendaftaran)
+        ->where('wp.status', 'sudah')
+        ->whereNotNull('pk.nilaiFinal')
+        ->select(
+            DB::raw('AVG(pk.nilaiFinal) as nilaiAkhir'),
+            DB::raw('COUNT(pk.id) as jumlahPenilai')
+        )
+        ->first();
+
+        // detail kriteria
+        $detailKriteria = DB::table('penilaian_setiap_bobot as pb')
+            ->join('penilaian_kandidat as pk', 'pk.id', '=', 'pb.idPenilaianKandidat')
+            ->join('wawancara_penilai as wp', 'wp.id', '=', 'pk.idWawancaraPenilai')
+            ->join('jadwal_wawancara as jw', 'jw.id', '=', 'wp.idJadwalWawancara')
+            ->join('bobot_kriteria as bk', 'bk.id', '=', 'pb.idBobotKriteria')
+            ->join('kriteria as k', 'bk.idKriteria', '=', 'k.id')
+            ->where('jw.idPendaftaran', $idPendaftaran)
+            ->select(
+                'pb.idPenilaianKandidat',
+                'k.namaKriteria',
+                'pb.nilaiAwal',
+                'pb.nilaiAkhir',
+                'pb.bobotKriteria'
+            )
+            ->get()
+            ->groupBy('idPenilaianKandidat');
+
+        return view('pendaftaran.detailnilaikandidat',compact('kandidat','penilaian','detailKriteria','summary'));
     }
 }
