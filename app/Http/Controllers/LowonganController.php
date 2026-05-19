@@ -8,6 +8,7 @@ use App\Models\TahapRekrutmen;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class LowonganController extends Controller
@@ -154,6 +155,7 @@ class LowonganController extends Controller
 
             $lowongan->update(['poster' => $posterPath]);
         }
+
         return redirect()->route('formulir.manage', $lowongan->id);
     }
 
@@ -166,9 +168,28 @@ class LowonganController extends Controller
         $today = Carbon::today();
         $batas = Carbon::parse($lowongan->batasPendaftaran);
 
-        if ($today > $batas) {
+        // if ($today > $batas) {
+        //     return redirect()->route('lowongans.index')
+        //         ->with('error', 'Lowongan sudah ditutup, tidak bisa diedit');
+        // }
+
+        $jumlahPendaftar = DB::table('pendaftaran')
+            ->where('idLowongan', $id)
+            ->count();
+
+        $adaProsesSeleksi = DB::table('pendaftaran')
+            ->where('idLowongan', $id)
+            ->whereIn('status', ['diproses', 'diterima', 'ditolak'])
+            ->exists();
+
+        if ($adaProsesSeleksi) {
             return redirect()->route('lowongans.index')
-                ->with('error', 'Lowongan sudah ditutup, tidak bisa diedit');
+                ->with('error', 'Lowongan tidak bisa diperbarui karena proses seleksi sudah berjalan');
+        }
+
+        if ($today > $batas && $jumlahPendaftar >= $lowongan->kuota_diterima) {
+            return redirect()->route('lowongans.index')
+                ->with('error', 'Lowongan sudah ditutup dan kuota sudah terpenuhi');
         }
 
         return view('lowongan.edit', compact('lowongan'));
@@ -180,12 +201,28 @@ class LowonganController extends Controller
     public function update(Request $request, string $id)
     {
         $lowongan = Lowongan::findOrFail($id);
+
         $today = Carbon::today();
         $batas = Carbon::parse($lowongan->batasPendaftaran);
 
-        if ($today > $batas) {
+        $jumlahPendaftar = DB::table('pendaftaran')
+            ->where('idLowongan', $id)
+            ->count();
+
+        $adaProsesSeleksi = DB::table('pendaftaran')
+            ->where('idLowongan', $id)
+            ->whereIn('status', ['diproses', 'diterima', 'ditolak'])
+            ->exists();
+
+        if ($adaProsesSeleksi) {
             return redirect()->route('lowongans.index')
-                ->with('error', 'Lowongan sudah ditutup, tidak bisa diedit');
+                ->with('error', 'Lowongan tidak bisa diperbarui karena proses seleksi sudah berjalan');
+        }
+
+        // kalau lowongan tutup dan kuota terpenuhi
+        if ($today > $batas && $jumlahPendaftar >= $lowongan->kuota_diterima) {
+            return redirect()->route('lowongans.index')
+                ->with('error', 'Lowongan sudah ditutup dan kuota sudah terpenuhi');
         }
 
         $request->validate([

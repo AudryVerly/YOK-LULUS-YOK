@@ -226,11 +226,37 @@
                                                                     $batas = \Carbon\Carbon::parse(
                                                                         $lowongans->batasPendaftaran,
                                                                     );
+
+                                                                    $jumlahPendaftar = DB::table('pendaftaran')
+                                                                        ->where('idLowongan', $lowongans->id)
+                                                                        ->count();
+
+                                                                    $adaProsesSeleksi = DB::table('pendaftaran')
+                                                                        ->where('idLowongan', $lowongans->id)
+                                                                        ->whereIn('statusPendaftaran', [
+                                                                            'diproses',
+                                                                            'diterima',
+                                                                            'ditolak',
+                                                                        ])
+                                                                        ->exists();
+
+                                                                    $bolehEdit = true;
+
+                                                                    if (
+                                                                        $today > $batas &&
+                                                                        $jumlahPendaftar >= $lowongans->kuota_diterima
+                                                                    ) {
+                                                                        $bolehEdit = false;
+                                                                    }
+
+                                                                    if ($adaProsesSeleksi) {
+                                                                        $bolehEdit = false;
+                                                                    }
                                                                 @endphp
                                                                 <a href="{{ route('lowongans.edit', $lowongans->id) }}"
                                                                     class="btn bg-gradient-info text-white px-4
-                                                                    {{ $lowongans->is_ready == 1 && $today >= $batas ? 'disabled' : '' }}"
-                                                                    style="{{ $lowongans->is_ready == 1 && $today >= $batas ? 'pointer-events:none;' : '' }}">
+                                                                    {{ !$bolehEdit ? 'disabled' : '' }}"
+                                                                    style="{{ !$bolehEdit ? 'pointer-events:none;' : '' }}">
                                                                     <i class="material-symbols-rounded text-sm">edit</i><span
                                                                         class="align-middle">&nbsp;&nbsp;Edit Lowongan</span>
                                                                 </a>
