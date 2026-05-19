@@ -19,6 +19,8 @@ return new class extends Migration
             $table->text('file_path')->nullable();
             $table->date('tanggal_publish');
             $table->timestamps();
+
+              $table->foreign('idPendaftaran')->references('id')->on('pendaftaran')->onDelete('cascade');
         });
     }
 

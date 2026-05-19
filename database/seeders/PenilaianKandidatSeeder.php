@@ -14,7 +14,7 @@ class PenilaianKandidatSeeder extends Seeder
     {
         DB::table('penilaian_kandidat')->insert([
             [
-                'id' => 2,
+                'id' => 1,
                 'idPendaftaran' => 1,
                 'idWawancaraPenilai' => 1,
                 'nilaiFinal' => 0.94790040876997,
@@ -22,7 +22,7 @@ class PenilaianKandidatSeeder extends Seeder
                 'tanggal_menilai' => '2026-04-28',
             ],
             [
-                'id' => 3,
+                'id' => 2,
                 'idPendaftaran' => 1,
                 'idWawancaraPenilai' => 2,
                 'nilaiFinal' => 0.92666914406045,
@@ -30,7 +30,7 @@ class PenilaianKandidatSeeder extends Seeder
                 'tanggal_menilai' => '2026-04-28',
             ],
             [
-                'id' => 4,
+                'id' => 3,
                 'idPendaftaran' => 2,
                 'idWawancaraPenilai' => 4,
                 'nilaiFinal' => 0.95647180691654,
@@ -38,7 +38,7 @@ class PenilaianKandidatSeeder extends Seeder
                 'tanggal_menilai' => '2026-04-28',
             ],
             [
-                'id' => 5,
+                'id' => 4,
                 'idPendaftaran' => 2,
                 'idWawancaraPenilai' => 3,
                 'nilaiFinal' => 0.91322370858664,

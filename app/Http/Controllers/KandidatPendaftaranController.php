@@ -170,7 +170,7 @@ class KandidatPendaftaranController extends Controller
             ->where('idPendaftaran', $idPendaftaran)
             ->count();
 
-        $isFinal = in_array($detailKandidat->statusPendaftaran, ['Diterima', 'Ditolak']);
+        $isFinal = in_array($detailKandidat->statusPendaftaran, ['diterima', 'ditolak']);
 
         $isWawancara = $tahapan->contains(fn ($t) => $t->tipe_tahap === 'Wawancara');
 

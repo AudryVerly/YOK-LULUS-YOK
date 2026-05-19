@@ -14,7 +14,7 @@ class UnitSeeder extends Seeder
     public function run(): void
     {
         DB::table('unit')->insert([
-             [
+            [
                 'name' => 'PPKP',
                 'deskripsi' => 'Pusat Pengembangan Karir dan Pelatihan yang bertanggung jawab dalam pembinaan karir mahasiswa serta penyelenggaraan pelatihan kerja.',
                 'lokasi' => 'Gedung BA 1.1',

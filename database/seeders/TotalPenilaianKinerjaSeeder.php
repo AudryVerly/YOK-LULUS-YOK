@@ -22,7 +22,7 @@ class TotalPenilaianKinerjaSeeder extends Seeder
             ],
             [
                 'idPendaftaran' => 2,
-                'totalNilai' => 84,
+                'totalNilai' => 83.75,
                 'kategori' => 'Baik',
                 'created_at' => null,
                 'updated_at' => null,

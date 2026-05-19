@@ -14,7 +14,7 @@ class JadwalWawancaraSeeder extends Seeder
     {
         DB::table('jadwal_wawancara')->insert([
             [
-                'idProgressTahapan' => 12,
+                'idProgressTahapan' => 2,
                 'idPendaftaran' => 1,
                 'tanggal_wawancara' => '2025-02-04',
                 'waktu_mulai' => '15:00:00',
@@ -27,7 +27,7 @@ class JadwalWawancaraSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idProgressTahapan' => 16,
+                'idProgressTahapan' => 6,
                 'idPendaftaran' => 2,
                 'tanggal_wawancara' => '2026-03-06',
                 'waktu_mulai' => '12:00:00',

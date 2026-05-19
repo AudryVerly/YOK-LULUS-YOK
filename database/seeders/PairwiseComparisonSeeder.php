@@ -38,9 +38,9 @@ class PairwiseComparisonSeeder extends Seeder
                 'updated_at' => now(),
             ],
 
-            // Unit 2
+            // Unit 5
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'kriteriaAwal' => 1,
                 'kriteriaPembanding' => 2,
                 'nilai' => 5,
@@ -48,7 +48,7 @@ class PairwiseComparisonSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'kriteriaAwal' => 1,
                 'kriteriaPembanding' => 4,
                 'nilai' => 3,
@@ -56,7 +56,7 @@ class PairwiseComparisonSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'kriteriaAwal' => 1,
                 'kriteriaPembanding' => 5,
                 'nilai' => 7,
@@ -64,7 +64,7 @@ class PairwiseComparisonSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'kriteriaAwal' => 1,
                 'kriteriaPembanding' => 6,
                 'nilai' => 9,
@@ -72,7 +72,7 @@ class PairwiseComparisonSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'kriteriaAwal' => 2,
                 'kriteriaPembanding' => 4,
                 'nilai' => 3,
@@ -80,7 +80,7 @@ class PairwiseComparisonSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'kriteriaAwal' => 2,
                 'kriteriaPembanding' => 5,
                 'nilai' => 5,
@@ -88,7 +88,7 @@ class PairwiseComparisonSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'kriteriaAwal' => 2,
                 'kriteriaPembanding' => 6,
                 'nilai' => 7,
@@ -96,7 +96,7 @@ class PairwiseComparisonSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'kriteriaAwal' => 4,
                 'kriteriaPembanding' => 5,
                 'nilai' => 3,
@@ -104,7 +104,7 @@ class PairwiseComparisonSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'kriteriaAwal' => 4,
                 'kriteriaPembanding' => 6,
                 'nilai' => 5,
@@ -112,7 +112,7 @@ class PairwiseComparisonSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'kriteriaAwal' => 5,
                 'kriteriaPembanding' => 6,
                 'nilai' => 3,

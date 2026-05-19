@@ -218,36 +218,34 @@
                                                             Gagal
                                                         </button>
                                                     @endif
-                                                    @if ($tahap->tipe_tahap == 'Wawancara')
-                                                        @if (!$isWawancara || !$penilaianStart || $isFinal)
-                                                            <button class="btn btn-secondary btn-sm px-3" disabled>
-                                                                Wawancara
-                                                            </button>
-                                                        @else
-                                                            {{-- kalau belum pernah ada jadwal --}}
-                                                            @if ($jumlahJadwalWawancara == 0)
-                                                                <a href="{{ route('kandidat.wawancara', [
-                                                                    'idProgressTahapan' => $tahap->progress_id,
-                                                                    'idPendaftaran' => $detailKandidat->idPendaftaran,
-                                                                ]) }}"
-                                                                    class="btn btn-info btn-sm px-3">
-                                                                    Set Wawancara
-                                                                </a>
-                                                            @else
-                                                                {{-- kalau sudah ada jadwal, tetap boleh tambah --}}
-                                                                <a href="{{ route('kandidat.wawancara', [
-                                                                    'idProgressTahapan' => $tahap->progress_id,
-                                                                    'idPendaftaran' => $detailKandidat->idPendaftaran,
-                                                                ]) }}"
-                                                                    class="btn btn-warning btn-sm px-3">
-                                                                    Edit / Tambah Wawancara
-                                                                </a>
-                                                            @endif
-                                                        @endif
-                                                    @endif
                                                 </div>
                                             </form>
                                         </div>
+                                    @endif
+                                    @if ($tahap->tipe_tahap == 'Wawancara' && in_array($tahap->status, ['Proses', 'Lulus']) && !$isFinal)
+                                        @if (!$isWawancara || !$penilaianStart)
+                                            <button class="btn btn-secondary btn-sm px-3" disabled>
+                                                Wawancara
+                                            </button>
+                                        @else
+                                            @if ($jumlahJadwalWawancara == 0)
+                                                <a href="{{ route('kandidat.wawancara', [
+                                                    'idProgressTahapan' => $tahap->progress_id,
+                                                    'idPendaftaran' => $detailKandidat->idPendaftaran,
+                                                ]) }}"
+                                                    class="btn btn-info btn-sm px-3">
+                                                    Set Wawancara
+                                                </a>
+                                            @else
+                                                <a href="{{ route('kandidat.wawancara', [
+                                                    'idProgressTahapan' => $tahap->progress_id,
+                                                    'idPendaftaran' => $detailKandidat->idPendaftaran,
+                                                ]) }}"
+                                                    class="btn btn-warning btn-sm px-3">
+                                                    Edit / Tambah Wawancara
+                                                </a>
+                                            @endif
+                                        @endif
                                     @endif
                                 </div>
                             @endforeach

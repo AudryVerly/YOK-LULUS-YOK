@@ -50,7 +50,7 @@ class BerkasPendaftaranSeeder extends Seeder
                 'idPendaftaran' => 5,
                 'idKontenFormulir' => 15, // CV Lowongan 2
                 'namaFile' => 'CV_Cindy_Oktavia.pdf',
-                'filePath' => 'berkas_pendaftaran/4/CV_Cindy_Oktavia.pdf',
+                'filePath' => 'berkas_pendaftaran/5/CV_Cindy_Oktavia.pdf',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

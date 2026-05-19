@@ -29,7 +29,7 @@ class PengumumanSeeder extends Seeder
                 'idPendaftaran' => 2,
                 'nomor_surat' => '0171/FT/IX/2025',
                 'status' => 'Terima',
-                'file_path' => 'pengumuman/2/pengumuman_asisten_startup_batch_1_2.pdf',
+                'file_path' => 'pengumuman/2/pengumuman_asisten_seketariat_mahasiswa_5.pdf',
                 'tanggal_publish' => Carbon::parse('2026-03-15'),
                 'is_publish' => 1,
                 'created_at' => null,

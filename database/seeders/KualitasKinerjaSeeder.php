@@ -62,7 +62,7 @@ class KualitasKinerjaSeeder extends Seeder
 
             // ===================== UNIT 2 =====================
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'nilaiMin' => 0,
                 'nilaiMax' => 59.99,
                 'kategori' => 'Sangat Buruk',
@@ -71,7 +71,7 @@ class KualitasKinerjaSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'nilaiMin' => 60,
                 'nilaiMax' => 69.99,
                 'kategori' => 'Buruk',
@@ -80,7 +80,7 @@ class KualitasKinerjaSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'nilaiMin' => 70,
                 'nilaiMax' => 79.99,
                 'kategori' => 'Cukup',
@@ -89,7 +89,7 @@ class KualitasKinerjaSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'nilaiMin' => 80,
                 'nilaiMax' => 89.99,
                 'kategori' => 'Baik',
@@ -98,7 +98,7 @@ class KualitasKinerjaSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'nilaiMin' => 90,
                 'nilaiMax' => 100,
                 'kategori' => 'Sangat Baik',

@@ -31,7 +31,7 @@ class WawancaraPenilaiSeeder extends Seeder
             ],
             [
                 'idJadwalWawancara' => 2,
-                'idStaffUnit' => 9,
+                'idStaffUnit' => 14,
                 'status' => 'sudah',
                 'token' => 'Ox4bmdKGx44RSB5HejrXWCAmicrdF5Xl9oQTqi6d',
                 'created_at' => now(),
@@ -39,7 +39,7 @@ class WawancaraPenilaiSeeder extends Seeder
             ],
             [
                 'idJadwalWawancara' => 2,
-                'idStaffUnit' => 8,
+                'idStaffUnit' => 15,
                 'status' => 'sudah',
                 'token' => 'EaZ7don1omZ0ByrkjcHtBQwN2Pv7uti7zXBKuWxj',
                 'created_at' => now(),

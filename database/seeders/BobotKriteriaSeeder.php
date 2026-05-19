@@ -51,7 +51,7 @@ class BobotKriteriaSeeder extends Seeder
             ],
             [
                 'id' => 5,
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'idKriteria' => 2,
                 'nilaiBobot' => 0.24920781806126,
                 'is_active' => 1,
@@ -60,7 +60,7 @@ class BobotKriteriaSeeder extends Seeder
             ],
             [
                 'id' => 6,
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'idKriteria' => 4,
                 'nilaiBobot' => 0.15056927872858,
                 'is_active' => 1,
@@ -69,7 +69,7 @@ class BobotKriteriaSeeder extends Seeder
             ],
             [
                 'id' => 7,
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'idKriteria' => 5,
                 'nilaiBobot' => 0.067071686688692,
                 'is_active' => 1,
@@ -78,7 +78,7 @@ class BobotKriteriaSeeder extends Seeder
             ],
             [
                 'id' => 8,
-                'idUnit' => 2,
+                'idUnit' => 5,
                 'idKriteria' => 6,
                 'nilaiBobot' => 0.034104360276913,
                 'is_active' => 1,

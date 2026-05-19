@@ -18,8 +18,8 @@ return new class extends Migration
             $table->date('tanggal_wawancara');
             $table->time('waktu_mulai');
             $table->time('waktu_selesai');
-            $table->string('lokasi');
-            $table->text('link_wawancara');
+            $table->string('lokasi')->nullable();
+            $table->text('link_wawancara')->nullable();
             $table->text('keterangan');
             $table->enum('status',['terjadwal','selesai','batal']);
             $table->timestamps();

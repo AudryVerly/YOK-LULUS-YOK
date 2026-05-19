@@ -623,7 +623,6 @@ class PenilaianKinerjaController extends Controller
 
     public function listpenilaiankinerja()
     {
-
         $units = DB::table('unit')
             ->orderBy('name')
             ->where('status', 1)
