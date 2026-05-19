@@ -262,7 +262,7 @@
                     <a class="nav-link {{ request()->is('tugasadmin*') ? 'active bg-gradient-dark text-white' : 'text-dark' }}"
                         href="{{ route('tugasadmin.listmahasiswa') }}">
                         <i class="material-symbols-rounded opacity-5">assignment</i>
-                        <span class="nav-link-text ms-1">Tugas Student Employee</span>
+                        <span class="nav-link-text ms-1">Tugas dan Kinerja</span>
                     </a>
                 </li>
             @endcan

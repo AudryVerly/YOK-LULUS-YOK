@@ -52,7 +52,7 @@
                         <div class="card-footer bg-white border-0 pt-2 pb-3 px-3">
                             <a href="{{ route('tugasadmin.listtugasadmin', [$m->idMahasiswa, $m->idLowongan]) }}"
                                 class="btn btn-outline-primary w-100">
-                                Lihat Detail Tugas
+                                Lihat Detail Kinerja
                             </a>
                         </div>
                     </div>

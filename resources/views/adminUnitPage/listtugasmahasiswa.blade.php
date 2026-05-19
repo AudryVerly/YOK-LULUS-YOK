@@ -6,7 +6,7 @@
         <div class="card mb-4 shadow-sm border-0">
             <div class="card-body">
                 <h5 class="mb-1 fw-bold">{{ $mahasiswa->namaMahasiswa }}</h5>
-                <small class="text-muted">Detail Tugas Student Employee</small>
+                <small class="text-muted">Detail Tugas dan Penilaian Form Student Employee</small>
             </div>
         </div>
 
@@ -80,6 +80,46 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+        <div class="card mb-3 shadow-sm border-0 mt-3">
+            <div class="card-header bg-dark text-white">
+                Penilaian Kinerja
+            </div>
+
+            <div class="card-body">
+
+                @forelse ($penilaian as $p)
+                    <div class="border rounded p-3 mb-3">
+
+                        <div class="fw-bold mb-2">
+                            Total Nilai: {{ $p->total_nilai }}
+                        </div>
+
+                        <div class="mb-2">
+                            Catatan: {{ $p->catatan ?? '-' }}
+                        </div>
+
+                        <div class="mb-2">
+                            Tanggal: {{ \Carbon\Carbon::parse($p->tanggal_menilai)->format('d M Y') }}
+                        </div>
+
+                        <hr>
+
+                        <div class="fw-bold mb-2">Kriteria</div>
+
+                        @foreach ($kriteria[$p->id] ?? [] as $k)
+                            <div class="d-flex justify-content-between border-bottom py-1">
+                                <span>{{ $k->nama }}</span>
+                                <span class="fw-bold">{{ $k->nilai }}</span>
+                            </div>
+                        @endforeach
+
+                    </div>
+                @empty
+                    <p class="text-muted">Belum ada penilaian</p>
+                @endforelse
+
             </div>
         </div>
     </div>

@@ -349,6 +349,22 @@ class PenilaianKinerjaController extends Controller
             ->where('m.id', $idMahasiswa)
             ->select('m.id', 'u.name as namaMahasiswa')
             ->first();
+        $penilaian = DB::table('penilaian_kinerja_form')
+            ->where('idMahasiswa', $idMahasiswa)
+            ->where('idLowongan', $idLowongan)
+            ->get();
+        $kriteria = [];
+
+        foreach ($penilaian as $penilaians) {
+            $kriteria[$penilaians->id] = DB::table('penilaian_kriteria_form as pkcf')
+                ->join('kriteria_kinerja as kk', 'kk.id', '=', 'pkcf.idKriteriaKinerja')
+                ->where('pkcf.idPenilaianForm', $penilaians->id)
+                ->select(
+                    'kk.nama as nama',
+                    'pkcf.nilai'
+                )
+                ->get();
+        }
         $tugas = DB::table('tugas_mahasiswa as tm')
             ->join('tugas as t', 't.id', '=', 'tm.idTugas')
             ->leftJoin('penilaian_kinerja as pk', function ($join) use ($idMahasiswa) {
@@ -372,7 +388,7 @@ class PenilaianKinerjaController extends Controller
             )
             ->get();
 
-        return view('adminUnitPage.listtugasmahasiswa', compact('mahasiswa', 'tugas'));
+        return view('adminUnitPage.listtugasmahasiswa', compact('mahasiswa', 'tugas', 'penilaian', 'kriteria'));
 
     }
 
