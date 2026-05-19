@@ -59,7 +59,8 @@ class PenilaianKandidatController extends Controller
                 'u.name as namaKandidat',
                 'l.judulLowongan',
                 'l.posisiLowongan',
-                'l.idUnit'
+                'l.idUnit',
+                'p.id as idPendaftaran'
             )
             ->first();
 
@@ -74,8 +75,17 @@ class PenilaianKandidatController extends Controller
             )
             ->orderBy('bk.nilaiBobot', 'desc')
             ->get();
+        $berkasPendaftaran = DB::table('berkas_pendaftaran as b')
+            ->join('konten_formulir as kf', 'kf.id', '=', 'b.idKontenFormulir')
+            ->where('b.idPendaftaran', $data->idPendaftaran)
+            ->select(
+                'kf.namaField',
+                'b.namaFile',
+                'b.filePath'
+            )
+            ->get();
 
-        return view('penilaiankandidat.formnilai', compact('data', 'kriteria'));
+        return view('penilaiankandidat.formnilai', compact('data', 'kriteria','berkasPendaftaran'));
     }
 
     public function saveNilai(Request $request)
@@ -274,7 +284,7 @@ class PenilaianKandidatController extends Controller
             ->leftJoin('penilaian_kandidat as pk', 'pk.idWawancaraPenilai', '=', 'wp.id')
             ->leftJoin('pengumuman as pg', 'pg.idPendaftaran', '=', 'p.id')
             ->where('p.idLowongan', $idLowongan)
-            // ->where('p.statusPendaftaran', '!=', 'ditolak')
+            ->where('p.statusPendaftaran', '!=', 'ditolak')
             ->select(
                 'p.id as idPendaftaran',
                 'p.idMahasiswa',

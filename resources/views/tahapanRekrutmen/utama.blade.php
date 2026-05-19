@@ -46,10 +46,10 @@
                                                 <div class="d-flex justify-content-center align-items-center ">
                                                     @if ($low->status == 1)
                                                         <span
-                                                            class="badge bg-gradient-success text-white px-3 py-2">Open</span>
+                                                            class="badge bg-gradient-success text-white px-3 py-2">Buka</span>
                                                     @else
                                                         <span
-                                                            class="badge bg-gradient-danger text-white px-3 py-2">Closed</span>
+                                                            class="badge bg-gradient-danger text-white px-3 py-2">Tutup</span>
                                                     @endif
                                                 </div>
                                             </td>

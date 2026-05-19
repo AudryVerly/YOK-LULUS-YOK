@@ -43,6 +43,56 @@
             </div>
         </div>
 
+        @if ($pendaftaranBaru->count() > 0)
+            <div class="card shadow-sm border-0 mb-4" style="border-radius:16px;">
+                <div class="card-body">
+
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <h6 class="mb-0 fw-bold">
+                                    Pemberitahuan Pendaftar Baru
+                                </h6>
+
+                                <small class="text-muted">
+                                    Kandidat terbaru yang mendaftar
+                                </small>
+                            </div>
+                        </div>
+
+                        <span class="badge bg-primary">
+                            {{ $pendaftaranBaru->count() }} Pendaftar Baru
+                        </span>
+                    </div>
+
+                    @foreach ($pendaftaranBaru as $p)
+                        <div class="d-flex justify-content-between align-items-center py-3 px-2 rounded-3 mb-2"
+                            style="background-color:#f8f9fa;">
+
+                            <div>
+                                <div class="fw-semibold text-dark">
+                                    {{ $p->namaMahasiswa }}
+                                </div>
+
+                                <small class="text-muted">
+                                    Mendaftar pada lowongan
+                                    <span class="text-primary fw-semibold">
+                                        {{ $p->judulLowongan }}
+                                    </span>
+                                </small>
+                            </div>
+
+                            <small class="text-muted">
+                                {{ \Carbon\Carbon::parse($p->tanggal_daftar)->locale('id')->diffForHumans() }}
+                            </small>
+                        </div>
+                    @endforeach
+
+                </div>
+            </div>
+        @endif
+
+
         <div class="card shadow-sm border-0 mb-3">
             <div class="card-body">
                 <h5 class="fw-semibold mb-3">Kalender Pelaksanaan Lowongan</h5>

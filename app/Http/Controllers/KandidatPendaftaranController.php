@@ -60,6 +60,12 @@ class KandidatPendaftaranController extends Controller
             $progressKandidat = DB::table('progress_tahapan_kandidat')
                 ->where('idPendaftaran', $item->idPendaftaran)
                 ->get();
+           
+            if ($item->statusPendaftaran == 'ditolak') {
+                $item->tahapIni = 'Gagal';
+
+                continue;
+            }
 
             $tahapIni = 'Menunggu';
             $tahapTerakhir = null;

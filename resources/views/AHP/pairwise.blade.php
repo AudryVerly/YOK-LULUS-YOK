@@ -34,13 +34,7 @@
 
                             <input type="range" min="1" max="9" value="1" class="slider"
                                 id="slider{{ $index }}" name="comparison[{{ $pair[0]->id }}-{{ $pair[1]->id }}]"
-                                {{ $isLocked ? 'disabled' : '' }} 
-                                style="{{ $isLocked ? 'cursor: not-allowed;' : '' }}">
-
-                            <div class="d-flex justify-content-between mt-2 small text-muted">
-                                <span>{{ $pair[0]->namaKriteria }} lebih penting</span>
-                                <span>{{ $pair[1]->namaKriteria }} lebih penting</span>
-                            </div>
+                                {{ $isLocked ? 'disabled' : '' }} style="{{ $isLocked ? 'cursor: not-allowed;' : '' }}">
 
                             <div class="text-center mt-2">
                                 <small class="fw-semibold text-primary d-none" id="desc{{ $index }}"></small>
@@ -55,9 +49,8 @@
                     </div>
                 @endforeach
                 <div class="d-flex justify-content-end mt-3">
-                    <button type="button" id="btnProses" class="btn btn-success"
-                        {{ $isLocked ? 'disabled' : '' }}
-                       style="width: 15%; {{ $isLocked ? 'cursor: not-allowed; pointer-events: all;' : '' }}">
+                    <button type="button" id="btnProses" class="btn btn-success" {{ $isLocked ? 'disabled' : '' }}
+                        style="width: 15%; {{ $isLocked ? 'cursor: not-allowed; pointer-events: all;' : '' }}">
                         Proses AHP
                     </button>
                 </div>
@@ -125,14 +118,30 @@
                 }
 
                 function getDesc(v) {
-                    if (v == 1) return 'Keduanya sama penting';
-                    if (v == 2) return kiri + ' sedikit lebih penting dari ' + kanan;
-                    if (v == 3) return kiri + ' lebih penting dari ' + kanan;
-                    if (v == 4) return kiri + ' cukup lebih penting dari ' + kanan;
-                    if (v == 5) return kiri + ' penting dari ' + kanan;
-                    if (v == 6) return kiri + ' sangat penting dari ' + kanan;
-                    if (v == 7) return kiri + ' jauh lebih penting dari ' + kanan;
-                    if (v == 8) return kiri + ' hampir mutlak lebih penting dari ' + kanan;
+
+                    if (v == 1)
+                        return 'Kedua kriteria sama penting';
+
+                    if (v == 2)
+                        return kiri + ' sedikit lebih penting dari ' + kanan;
+
+                    if (v == 3)
+                        return kiri + ' lebih penting dari ' + kanan;
+
+                    if (v == 4)
+                        return kiri + ' cukup lebih penting dari ' + kanan;
+
+                    if (v == 5)
+                        return kiri + ' penting dari ' + kanan;
+
+                    if (v == 6)
+                        return kiri + ' sangat penting dari ' + kanan;
+
+                    if (v == 7)
+                        return kiri + ' jauh lebih penting dari ' + kanan;
+
+                    if (v == 8)
+                        return kiri + ' hampir mutlak lebih penting dari ' + kanan;
 
                     return kiri + ' mutlak lebih penting dari ' + kanan;
                 }

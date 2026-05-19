@@ -44,10 +44,10 @@
                                             <td style="padding: 10px 16px; text-align: center;">
                                                 @if ($low->status == 1)
                                                     <span
-                                                        class="badge bg-gradient-success text-white px-3 py-2">Aktif</span>
+                                                        class="badge bg-gradient-success text-white px-3 py-2">Buka</span>
                                                 @else
                                                     <span
-                                                        class="badge bg-gradient-danger text-white px-3 py-2">Nonaktif</span>
+                                                        class="badge bg-gradient-danger text-white px-3 py-2">Tutup</span>
                                                 @endif
                                             </td>
                                             <td>

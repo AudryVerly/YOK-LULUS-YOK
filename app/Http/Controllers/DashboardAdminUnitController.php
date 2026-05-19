@@ -78,7 +78,7 @@ class DashboardAdminUnitController extends Controller
             ->leftJoin('wawancara_penilai as wp', 'wp.idJadwalWawancara', '=', 'jw.id')
             ->where('l.idUnit', $idUnit)
             ->whereDate('l.batasPendaftaran', '<', now())
-            ->whereNotIn('p.statusPendaftaran',['ditolak'])
+            ->whereNotIn('p.statusPendaftaran', ['ditolak'])
             ->select(
                 'p.id as idPendaftaran',
                 'u.name as namaKandidat',
@@ -172,12 +172,11 @@ class DashboardAdminUnitController extends Controller
             } elseif ($k->tahapProses) {
                 $k->statusProgress = 'Sedang proses';
                 $k->tahapSekarang = $k->tahapProses;
-            } 
-            elseif ($k->totalTahap > 0 && $k->totalTahapSelesai == 0) {
+            } elseif ($k->totalTahap > 0 && $k->totalTahapSelesai == 0) {
                 $k->statusProgress = 'Gagal';
                 $k->tahapSekarang = $k->tahapSelesai ? $k->tahapSelesai : 'Tahap Awal';
 
-            }elseif ($k->tahapSelesai) {
+            } elseif ($k->tahapSelesai) {
                 $k->statusProgress = 'Selesai';
                 $k->tahapSekarang = $k->tahapSelesai;
 
@@ -186,6 +185,20 @@ class DashboardAdminUnitController extends Controller
                 $k->tahapSekarang = '-';
             }
         }
+
+        $pendaftaranBaru = DB::table('pendaftaran as p')
+            ->join('lowongan as l', 'p.idLowongan', '=', 'l.id')
+            ->join('mahasiswa as m', 'm.id', '=', 'p.idMahasiswa')
+            ->join('users as u', 'u.id', '=', 'm.idUser')
+            ->where('l.idUnit', $idUnit)
+            ->whereDate('p.tanggal_daftar', today())
+            ->select(
+                'u.name as namaMahasiswa',
+                'l.judulLowongan',
+                'p.tanggal_daftar'
+            )
+            ->latest('p.tanggal_daftar')
+            ->get();
 
         $events = [];
         foreach ($lowongan as $l) {
@@ -225,6 +238,7 @@ class DashboardAdminUnitController extends Controller
             'lowonganBelumLengkap',
             'kandidatPerluTindakan',
             'progressKandidat',
-            'events'));
+            'events',
+            'pendaftaranBaru'));
     }
 }

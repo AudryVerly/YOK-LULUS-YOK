@@ -137,7 +137,8 @@
                                                     @else
                                                         {{-- BELUM ADA STATUS --}}
                                                         @if (is_null($k->status))
-                                                            <form action="{{ route('pengumuman.lolos') }}" method="POST">
+                                                            <form action="{{ route('pengumuman.lolos') }}" method="POST"
+                                                                class="form-lolos">
                                                                 @csrf
                                                                 <input type="hidden" name="idPendaftaran"
                                                                     value="{{ $k->idPendaftaran }}">
@@ -147,7 +148,8 @@
                                                                 </button>
                                                             </form>
 
-                                                            <form action="{{ route('pengumuman.tolak') }}" method="POST">
+                                                            <form action="{{ route('pengumuman.tolak') }}" method="POST"
+                                                                class="form-tolak">
                                                                 @csrf
                                                                 <input type="hidden" name="idPendaftaran"
                                                                     value="{{ $k->idPendaftaran }}">
@@ -157,21 +159,10 @@
                                                             </form>
                                                         @endif
 
-                                                        {{-- SUDAH TERIMA --}}
-                                                        @if ($k->status == 'Terima')
-                                                            <form action="{{ route('pengumuman.tolak') }}" method="POST">
-                                                                @csrf
-                                                                <input type="hidden" name="idPendaftaran"
-                                                                    value="{{ $k->idPendaftaran }}">
-                                                                <button class="btn btn-warning btn-sm">
-                                                                    Ubah ke Tolak
-                                                                </button>
-                                                            </form>
-                                                        @endif
-
                                                         {{-- SUDAH TOLAK --}}
                                                         @if ($k->status == 'Tolak')
-                                                            <form action="{{ route('pengumuman.lolos') }}" method="POST">
+                                                            <form action="{{ route('pengumuman.lolos') }}" method="POST"
+                                                                class="form-lolos">
                                                                 @csrf
                                                                 <input type="hidden" name="idPendaftaran"
                                                                     value="{{ $k->idPendaftaran }}">
@@ -230,6 +221,26 @@
             });
         });
 
+        $(document).on('submit', '.form-lolos', function(e) {
+            e.preventDefault();
+            let form = this;
+
+            Swal.fire({
+                title: 'Yakin terima kandidat ini?',
+                text: "Keputusan penerimaan bersifat final dan tidak dapat diubah.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                confirmButtonText: 'Ya, Terima',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+
+
         $(document).on('submit', '.form-tolak', function(e) {
             e.preventDefault();
             let form = this;
@@ -247,5 +258,23 @@
                 }
             });
         });
+
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: "{{ session('success') }}",
+                timer: 2500,
+                showConfirmButton: false
+            });
+        @elseif (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: "{{ session('error') }}",
+                timer: 2500,
+                showConfirmButton: false
+            });
+        @endif
     </script>
 @endpush

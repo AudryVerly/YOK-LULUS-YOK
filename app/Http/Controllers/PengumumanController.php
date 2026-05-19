@@ -82,10 +82,12 @@ class PengumumanController extends Controller
                     throw new \Exception('Data pendaftaran tidak ditemukan');
                 }
 
-                $pendaftaranLain = DB::table('pendaftaran')
-                    ->where('idMahasiswa', $pendaftaran->idMahasiswa)
-                    ->where('id', '!=', $pendaftaran->id)
-                    ->pluck('id');
+                $pendaftaranLain = DB::table('pendaftaran as p')
+                    ->join('lowongan as l', 'p.idLowongan', '=', 'l.id')
+                    ->where('p.idMahasiswa', $pendaftaran->idMahasiswa)
+                    ->where('p.id', '!=', $pendaftaran->id)
+                    ->where('l.mulaiKerja', '>', now())
+                    ->pluck('p.id');
 
                 PengumumanKandidat::updateOrInsert(
                     [
@@ -134,6 +136,14 @@ class PengumumanController extends Controller
         $request->validate([
             'idPendaftaran' => 'required',
         ]);
+
+        $existing = DB::table('pengumuman')
+            ->where('idPendaftaran', $request->idPendaftaran)
+            ->first();
+
+        if ($existing && $existing->status == 'Terima') {
+            return back()->with('error', 'Tidak bisa diubah, keputusan penerimaan sudah final.');
+        }
 
         PengumumanKandidat::updateOrInsert([
             'idPendaftaran' => $request->idPendaftaran,

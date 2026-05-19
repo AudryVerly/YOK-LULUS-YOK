@@ -9,6 +9,22 @@
             <h5>{{ $data->namaKandidat }}</h5>
             <p>{{ $data->judulLowongan }} - {{ $data->posisiLowongan }}</p>
         </div>
+        <div class="card mt-3 p-3">
+            <h6 class="fw-bold">Berkas Kandidat</h6>
+
+            @forelse ($berkasPendaftaran as $berkas)
+                <div class="border-bottom py-2">
+                    <div class="fw-semibold text-dark">{{ $berkas->namaField }}</div>
+                    <a href="{{ asset('storage/' . $berkas->filePath) }}" target="_blank"  class="text-info text-decoration-underline">
+                        {{ $berkas->namaFile }}
+                    </a>
+                </div>
+            @empty
+                <div class="text-muted">
+                    Tidak ada berkas
+                </div>
+            @endforelse
+        </div>
 
         <form action="{{ route('penilaian.hasilNilai') }}" method="POST">
             @csrf

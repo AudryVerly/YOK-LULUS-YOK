@@ -129,7 +129,7 @@
                                     </div>
                                     <div class="col-3">
                                         <small class="text-muted d-block">Bobot</small>
-                                        <span class="fw-bold text-warning">{{ $t->bobotNilai }}%</span>
+                                        <span class="fw-bold text-warning">{{ $t->bobotNilai }}</span>
                                     </div>
                                     <div class="col-3">
                                         <small class="text-muted d-block">Penalti</small>
@@ -163,7 +163,7 @@
                             <div class="row g-2 text-center">
                                 <div class="col-4">
                                     <small class="text-muted d-block">Total Bobot</small>
-                                    <span class="fw-bold text-warning">{{ $totalBobot }}%</span>
+                                    <span class="fw-bold text-warning">{{ $totalBobot }}</span>
                                 </div>
                                 <div class="col-4">
                                     <small class="text-muted d-block">Total Nilai Akhir</small>
