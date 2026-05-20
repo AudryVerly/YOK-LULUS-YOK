@@ -32,7 +32,8 @@ class PenilaianKandidatController extends Controller
                 'l.posisiLowongan as posisiLowongan',
                 'u.name as namaKandidat',
                 'wp.status as status',
-                'jw.tanggal_wawancara as tanggalWawancara'
+                'jw.tanggal_wawancara as tanggalWawancara',
+                'jw.waktu_mulai as waktuMulai'
             )
             ->orderByRaw("
                     CASE 

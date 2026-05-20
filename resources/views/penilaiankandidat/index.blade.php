@@ -34,7 +34,22 @@
                                 @endif
                             </div>
                             <p class="mb-1 text-muted">{{ $k->namaLowongan }}</p>
-                            <small class="text-secondary">{{ $k->posisiLowongan }}</small>
+                            <p class="text-secondary">{{ $k->posisiLowongan }}</p>
+                            <div class="border rounded-3 px-3 py-2 bg-light mb-3">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <i class="material-symbols-rounded text-secondary"
+                                        style="font-size:1rem">calendar_today</i>
+                                    <small class="text-secondary">
+                                        {{ \Carbon\Carbon::parse($k->tanggalWawancara)->translatedFormat('d F Y') }}
+                                    </small>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="material-symbols-rounded text-secondary" style="font-size:1rem">schedule</i>
+                                    <small class="text-secondary">
+                                        {{ \Carbon\Carbon::parse($k->waktuMulai)->format('H:i') }}
+                                    </small>
+                                </div>
+                            </div>
 
                             <div class="mt-3 d-flex justify-content-end">
                                 @if ($k->status == 'terjadwal')

@@ -12,13 +12,24 @@
                             class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center px-4">
                             <h6 class="text-white text-capitalize m-0">{{ $lowongan->judulLowongan }} - Tahapan Rekrutmen
                             </h6>
+                            @php
+                                $pendaftaranTutup = now()->gt(
+                                    \Carbon\Carbon::parse($lowongan->batasPendaftaran)->endOfDay(),
+                                );
+                                $tooltipTambah = $pendaftaranTutup
+                                    ? 'Pendaftaran sudah tutup, tidak bisa menambah tahapan'
+                                    : '';
+                            @endphp
                             <div class="d-flex gap-2">
-                                <button class="btn bg-white text-dark border shadow-sm" data-bs-toggle="modal"
-                                    data-bs-target="#modaladdtahapan" data-id-lowongan="{{ $lowongan->id }}"
-                                    {{ now()->gt(\Carbon\Carbon::parse($lowongan->batasPendaftaran)->endOfDay()) ? 'disabled' : '' }}>
-                                    <i class="material-symbols-rounded text-sm align-middle text-success">add</i>
-                                    <span class="align-middle fw-bold">Tambah Tahapan</span>
-                                </button>
+                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $tooltipTambah }}"
+                                    style="display:inline-block;">
+                                    <button class="btn bg-white text-dark border shadow-sm" data-bs-toggle="modal"
+                                        data-bs-target="#modaladdtahapan" data-id-lowongan="{{ $lowongan->id }}"
+                                        {{ $pendaftaranTutup ? 'disabled' : '' }}> <i
+                                        class="material-symbols-rounded text-sm align-middle text-success">add</i>
+                                        <span class="align-middle fw-bold">Tambah Tahapan</span>
+                                    </button>
+                                </span>
                                 @if ($checkFormulir == 0)
                                     <a href="{{ route('formulir.manage', $lowongan->id) }}"
                                         class="btn bg-gradient-info text-white shadow-sm" data-bs-toggle="tooltip"
@@ -45,6 +56,22 @@
                                     <div class="p-4">
                                         <div id ="listTahapan" class="d-flex flex-column gap-3 rounded">
                                             @foreach ($tahapan as $tahap)
+                                                @php
+                                                    $dipakai = $tahap->progressTahapanRekrutmen->count() > 0;
+                                                    $pendaftaranTutup = now()->gt(
+                                                        \Carbon\Carbon::parse($lowongan->batasPendaftaran)->endOfDay(),
+                                                    );
+                                                    $disableEdit = $pendaftaranTutup;
+                                                    $disableToggle = $pendaftaranTutup || $isLocked;
+                                                    $tooltipEdit = $disableEdit
+                                                        ? 'Pendaftaran sudah tutup, tahapan tidak bisa diedit'
+                                                        : '';
+                                                    $tooltipToggle = $disableToggle
+                                                        ? ($isLocked
+                                                            ? 'Tahapan sudah terkunci'
+                                                            : 'Pendaftaran sudah tutup, tahapan tidak bisa diubah')
+                                                        : '';
+                                                @endphp
                                                 <div class="tahapCard d-flex justify-content-between align-items-center w-100 p-3 rounded"
                                                     style="background:#f7f6f6ee; border-left:5px; box-shadow:0 4px 12px rgba(0,0,0,0.08); border-radius:12px; border:1px solid rgb(118, 113, 113);">
                                                     <div class="d-flex align-items-center gap-3">
@@ -72,31 +99,33 @@
                                                         </div>
                                                     </div>
                                                     <div class="d-flex align-items-center gap-3">
-                                                        <div class="tahap-toggle-switch">
-                                                            <input type="checkbox" id="toggle-{{ $tahap->id }}"
-                                                                class="tahap-toggle-input" data-id="{{ $tahap->id }}"
-                                                                {{ $tahap->status == 1 ? 'checked' : '' }}
-                                                                {{  now()->gt(\Carbon\Carbon::parse($lowongan->batasPendaftaran)->endOfDay()) || $isLocked ? 'disabled' : '' }}>
-                                                            <label for="toggle-{{ $tahap->id }}"
-                                                                class="tahap-toggle-label"></label>
-                                                        </div>
-
-                                                        @php
-                                                            $dipakai = $tahap->progressTahapanRekrutmen->count() > 0;
-                                                            $pendaftaranTutup =  now()->gt(\Carbon\Carbon::parse($lowongan->batasPendaftaran)->endOfDay());
-                                                        @endphp
-
-                                                        <button type="button" class="btnedit btn btn-secondary btn-sm"
-                                                            data-id-tahapan="{{ $tahap->id }}"
-                                                            data-name="{{ $tahap->name }}"
-                                                            data-urutan="{{ $tahap->urutan }}"
-                                                            data-tipe="{{ $tahap->tipe_tahap }}"
-                                                            data-dipakai="{{ $dipakai ? 1 : 0 }}"
-                                                            {{ $pendaftaranTutup ? 'disabled' : '' }}
-                                                            style="width:45px;height:45px;border-radius:12px;font-size:18px;"
-                                                            data-bs-toggle="modal" data-bs-target="#modaledittahap">
-                                                            <i class="material-symbols-rounded text-sm">edit</i>
-                                                        </button>
+                                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="{{ $tooltipToggle }}" style="display:inline-block;">
+                                                            <div class="tahap-toggle-switch">
+                                                                <input type="checkbox" id="toggle-{{ $tahap->id }}"
+                                                                    class="tahap-toggle-input"
+                                                                    data-id="{{ $tahap->id }}"
+                                                                    {{ $tahap->status == 1 ? 'checked' : '' }}
+                                                                    {{ now()->gt(\Carbon\Carbon::parse($lowongan->batasPendaftaran)->endOfDay()) || $isLocked ? 'disabled' : '' }}>
+                                                                <label for="toggle-{{ $tahap->id }}"
+                                                                    class="tahap-toggle-label"></label>
+                                                            </div>
+                                                        </span>
+                                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="{{ $tooltipEdit }}"
+                                                            style="display:inline-block; width:100%;">
+                                                            <button type="button" class="btnedit btn btn-secondary btn-sm"
+                                                                data-id-tahapan="{{ $tahap->id }}"
+                                                                data-name="{{ $tahap->name }}"
+                                                                data-urutan="{{ $tahap->urutan }}"
+                                                                data-tipe="{{ $tahap->tipe_tahap }}"
+                                                                data-dipakai="{{ $dipakai ? 1 : 0 }}"
+                                                                {{ $pendaftaranTutup ? 'disabled' : '' }}
+                                                                style="width:45px;height:45px;border-radius:12px;font-size:18px;"
+                                                                data-bs-toggle="modal" data-bs-target="#modaledittahap">
+                                                                <i class="material-symbols-rounded text-sm">edit</i>
+                                                            </button>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -233,9 +262,8 @@
                             <div class="custom-tooltip" data-title="Masukkan nama field, wajib diisi">
                                 <i class="material-symbols-rounded text-secondary ms-1" style="font-size: 1rem;">info</i>
                             </div>
-                            <input type="text" class="form-control border rounded-3 px-3 py-2"
-                                name="name" id="namaUrutan"
-                                value="{{ old('name') }}">
+                            <input type="text" class="form-control border rounded-3 px-3 py-2" name="name"
+                                id="namaUrutan" value="{{ old('name') }}">
                             @error('name')
                                 <div class="text-danger" id="errorName">{{ $message }}</div>
                             @enderror

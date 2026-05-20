@@ -155,14 +155,33 @@ class WawancaraController extends Controller
             ->where('id', $request->idPendaftaran)
             ->first();
 
+        $jadwalPendaftaranIni = DB::table('jadwal_wawancara')
+            ->where('idPendaftaran', $request->idPendaftaran)
+            ->pluck('id');
+
+        $sudahAssign = DB::table('wawancara_penilai')
+            ->whereIn('idJadwalWawancara', $jadwalPendaftaranIni)
+            ->where('status', '!=', 'gagal')
+            ->selectRaw('COUNT(DISTINCT idStaffUnit) as total')
+            ->value('total') ?? 0;
+
         // validasi jumlah penilai
         $jumlahPenilaiFix = $this->getJumlahPenilaiFix($lowongan->idLowongan);
         $timPenilai = $request->tim_penilai ?? [];
         $jumlahSekarang = is_array($timPenilai) ? count($timPenilai) : 1;
 
-        // dd($jumlahPenilaiFix, $jumlahSekarang);
+        $totalNanti = $sudahAssign + $jumlahSekarang;
 
-        if ($jumlahPenilaiFix !== null && $jumlahSekarang > $jumlahPenilaiFix) {
+        // dd($jumlahPenilaiFix, $jumlahSekarang);
+        // return response()->json([
+        //     'debug' => true,
+        //     'jumlahPenilaiFix' => $jumlahPenilaiFix,
+        //     'sudahAssign' => $sudahAssign,
+        //     'jumlahSekarang' => $jumlahSekarang,
+        //     'totalNanti' => $totalNanti,
+        // ]);
+
+        if ($jumlahPenilaiFix !== null && $totalNanti > $jumlahPenilaiFix) {
             return response()->json([
                 'status' => false,
                 'message' => 'Jumlah penilai harus konsisten ('.$jumlahPenilaiFix.' orang)',
@@ -261,22 +280,29 @@ class WawancaraController extends Controller
     private function getJumlahPenilaiFix($idLowongan)
     {
         // return null;
-        $jadwalIds = DB::table('jadwal_wawancara as j')
+        $pendaftaranPertama = DB::table('jadwal_wawancara as j')
             ->join('pendaftaran as p', 'j.idPendaftaran', '=', 'p.id')
             ->where('p.idLowongan', $idLowongan)
-            ->pluck('j.id');
+            ->orderBy('j.id', 'asc')
+            ->value('j.idPendaftaran');
+
+        // dd($pendaftaranPertama);
 
         // kalau belum pernah ada jadwal → belum ada patokan
-        if ($jadwalIds->isEmpty()) {
+        if (! $pendaftaranPertama) {
             return null;
         }
+
+        $jadwalIds = DB::table('jadwal_wawancara')
+            ->where('idPendaftaran', $pendaftaranPertama)
+            ->pluck('id');
 
         // ambil jumlah penilai dari jadwal pertama yang valid
         return DB::table('wawancara_penilai')
             ->whereIn('idJadwalWawancara', $jadwalIds)
             ->where('status', '!=', 'gagal')
-            ->distinct('idStaffUnit')
-            ->count('idStaffUnit');
+            ->selectRaw('COUNT(DISTINCT idStaffUnit) as total')
+            ->value('total');
     }
 
     public function confirmJadwal($idpewawancara, $aksi, Request $request)

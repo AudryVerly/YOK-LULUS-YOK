@@ -177,7 +177,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let jumlahPenilaiFix = {{ $jumlahPenilaiFix ?? 'null' }};
-        
+
         $(document).ready(function() {
             let calendarEl = document.getElementById('calendar');
 
@@ -215,7 +215,7 @@
 
                 eventClick: function(info) {
                     let e = info.event.extendedProps;
-                    
+
                     $('#detailNama').text(info.event.title);
                     $('#detailLowongan').text(e.namaLowongan);
                     $('#detailJam').text(e.waktuMulai + ' - ' + e.waktuSelesai);
@@ -248,7 +248,10 @@
                     Swal.fire({
                         icon: 'warning',
                         title: 'Batas Penilai',
-                        text: 'Jumlah penilai harus ' + jumlahPenilaiFix + ' orang'
+                        text:'Maksimal penilai ' + jumlahPenilaiFix + ' orang, tidak bisa menambah lagi',
+                        didOpen: () => {
+                            document.querySelector('.swal2-container').style.zIndex = '99999';
+                        }
                     });
                 }
             });
@@ -318,6 +321,7 @@
                 data: formData,
 
                 success: function(response) {
+                    console.log(response);
 
                     if (response.status === false) {
                         Swal.fire({
@@ -420,7 +424,7 @@
             form[0].reset();
 
             // paksa bersihin semua input
-            form.find('input[type="text"], input[type="date"], input[type="time"], textarea').val('');
+            form.find('input[type="text"]:not([readonly]), input[type="date"], input[type="time"], textarea').val('');
 
             // uncheck checkbox
             form.find('input[type="checkbox"]').prop('checked', false);
