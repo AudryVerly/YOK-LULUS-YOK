@@ -42,6 +42,8 @@
                                         <th class="text-uppercase text-body-secondary text-xxs font-weight-bolder opacity-7"
                                             style="text-align: center;">File</th>
                                         <th class="text-uppercase text-body-secondary text-xxs font-weight-bolder opacity-7"
+                                            style="text-align: center;">Nilai Akhir</th>
+                                        <th class="text-uppercase text-body-secondary text-xxs font-weight-bolder opacity-7"
                                             style="text-align: center;">Aksi</th>
                                     </tr>
                                 </thead>
@@ -99,6 +101,9 @@
                                                 @else
                                                     -
                                                 @endif
+                                            </td>
+                                            <td class="text-sm" style="text-align: center;">
+                                                {{ $d->nilaiAkhir  ?? '-' }}
                                             </td>
                                             <td>
                                                 <div class="d-flex justify-content-center gap-2">

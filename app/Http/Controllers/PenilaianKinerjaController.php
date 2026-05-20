@@ -142,6 +142,10 @@ class PenilaianKinerjaController extends Controller
             ->join('tugas_mahasiswa as tm', 'tm.idTugas', '=', 't.id')
             ->join('mahasiswa as m', 'm.id', '=', 'tm.idMahasiswa')
             ->join('users as u', 'u.id', '=', 'm.idUser')
+            ->leftJoin('penilaian_kinerja as pk', function ($join) {
+                $join->on('pk.idTugas', '=', 't.id')
+                    ->on('pk.idMahasiswa', '=', 'm.id');
+            })
             ->where('t.idUnit', $idUnit)
             ->whereIn('t.idStaffUnit', $idStaffUnits)
             ->select(
@@ -155,7 +159,8 @@ class PenilaianKinerjaController extends Controller
                 'tm.progressTugas',
                 'tm.file_path',
                 'tm.statusPengumpulan',
-                'tm.tanggalPengumpulan'
+                'tm.tanggalPengumpulan',
+                'pk.nilaiAkhir as nilaiAkhir'
             )
             ->get();
 
@@ -283,6 +288,10 @@ class PenilaianKinerjaController extends Controller
             ->join('staffUnit as st', 'st.id', '=', 't.idStaffUnit')
             ->join('users as u', 'u.id', '=', 'st.idUser')
             ->join('tugas_mahasiswa as tm', 'tm.idTugas', '=', 't.id')
+            ->leftJoin('penilaian_kinerja as pk', function ($join) {
+                $join->on('pk.idTugas', '=', 't.id')
+                    ->on('pk.idMahasiswa', '=', 'tm.idMahasiswa');
+            })
             ->where('tm.idMahasiswa', $idMahasiswa)
             ->where('t.idLowongan', $idLowongan)
             ->select(
@@ -290,13 +299,15 @@ class PenilaianKinerjaController extends Controller
                 't.namaTugas',
                 't.deskripsi',
                 't.tenggatPengumpulan',
+                't.bobotNilai',
                 'tm.progressTugas',
                 'tm.statusPengumpulan',
                 'tm.tanggalPengumpulan',
                 'tm.file_path',
                 'tm.tenggatRevisi',
                 'tm.catatanRevisi',
-                'u.name as namaUser'
+                'u.name as namaUser',
+                'pk.nilaiAkhir'
             )
             ->get();
 
@@ -925,5 +936,51 @@ class PenilaianKinerjaController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    public function detailPenilaianForm(string $idMahasiswa, string $idLowongan)
+    {
+        $idUnit = DB::table('lowongan')
+            ->where('id', $idLowongan)
+            ->value('idUnit');
+
+        // FIX: ambil semua staff unit (bukan satu)
+        $idStaffUnits = DB::table('staffunit')
+            ->where('idUser', auth()->id())
+            ->where('idUnit', $idUnit)
+            ->pluck('id');
+
+        $penilaian = DB::table('penilaian_kinerja_form as pkf')
+            ->join('mahasiswa as m', 'm.id', '=', 'pkf.idMahasiswa')
+            ->join('users as u', 'u.id', '=', 'm.idUser')
+            ->join('lowongan as l', 'l.id', '=', 'pkf.idLowongan')
+            ->where('pkf.idMahasiswa', $idMahasiswa)
+            ->where('pkf.idLowongan', $idLowongan)
+            ->whereIn('pkf.idStaffUnit', $idStaffUnits)
+            ->select(
+                'pkf.id as idPenilaianForm',
+                'u.name as namaMahasiswa',
+                'l.judulLowongan',
+                'pkf.total_nilai'
+            )
+            ->first();
+
+        if (! $penilaian) {
+            abort(404, 'Data penilaian tidak ditemukan');
+        }
+
+        $detail = DB::table('penilaian_kriteria_form as pkc')
+            ->join('kriteria_kinerja as kk', 'kk.id', '=', 'pkc.idKriteriaKinerja')
+            ->where('pkc.idPenilaianForm', $penilaian->idPenilaianForm)
+            ->select(
+                'kk.nama',
+                'pkc.nilai'
+            )
+            ->get();
+
+        return view('penilaiankinerjaform.detailpenilaian', compact(
+            'penilaian',
+            'detail',
+        ));
     }
 }

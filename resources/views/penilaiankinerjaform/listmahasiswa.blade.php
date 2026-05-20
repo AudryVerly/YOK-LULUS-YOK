@@ -104,12 +104,19 @@
                                         Mulai Penilaian
                                     </a>
                                 @else
-                                    <button class="btn btn-outline-primary w-100 rounded-pill" disabled>
+                                    <button class="btn btn-outline-secondary w-100 rounded-pill" disabled
+                                        style="cursor: not-allowed; pointer-events: all; opacity: 0.7;">
                                         Sudah Dinilai
                                     </button>
+
+                                    <a href="{{ route('penilaian.detail', [$d->idMahasiswa, $d->idLowongan]) }}"
+                                        class="btn btn-info w-100 rounded-pill">
+                                        Detail Penilaian
+                                    </a>
                                 @endif
                             @else
-                                <button class="btn btn-outline-warning w-100 rounded-pill" disabled>
+                                <button class="btn btn-outline-warning w-100 rounded-pill" disabled
+                                    style="cursor: not-allowed; pointer-events: all; opacity: 0.7;">
                                     Belum Waktunya
                                 </button>
                             @endif

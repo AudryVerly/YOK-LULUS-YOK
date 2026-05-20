@@ -110,6 +110,18 @@ class DashboardAdminUnitController extends Controller
                 )
                 OR (pk.nilaiFinal IS NULL)
             ')
+            ->orderByRaw('
+                CASE
+                    WHEN COUNT(jw.id) = 0 THEN 1
+                    WHEN COUNT(DISTINCT wp.idStaffUnit) = 0 THEN 2
+                    WHEN COUNT(DISTINCT CASE 
+                        WHEN wp.status = "sudah" THEN wp.idStaffUnit 
+                    END) < COUNT(DISTINCT wp.idStaffUnit) THEN 3
+                    WHEN pk.nilaiFinal IS NULL THEN 4
+                    ELSE 5
+                END
+            ')
+            ->latest('p.tanggal_daftar')
             ->get();
 
         $progressKandidat = DB::table('pendaftaran as p')
@@ -123,6 +135,7 @@ class DashboardAdminUnitController extends Controller
                 'l.id as idLowongan',
                 'p.id as idPendaftaran',
                 'u.name as namaKandidat',
+                'p.statusPendaftaran',
                 'l.judulLowongan',
 
                 DB::raw('MAX(tr.urutan) as maxUrutan'),
@@ -159,13 +172,20 @@ class DashboardAdminUnitController extends Controller
                     WHERE tr2.idLowongan = l.id
                 ) as totalTahapLowongan')
             )
-            ->groupBy('l.id', 'p.id', 'u.name', 'l.judulLowongan')
+            ->groupBy('l.id', 'p.id', 'u.name', 'l.judulLowongan','p.statusPendaftaran')
+            ->orderBy('p.tanggal_daftar', 'desc')
             ->get();
 
         foreach ($progressKandidat as $k) {
             $k->progressCount = $k->totalTahap.' / '.$k->totalTahapLowongan;
 
-            if ($k->totalTahap == 0) {
+            if ($k->totalTahap == 0 && $k->statusPendaftaran == 'ditolak') {
+
+                $k->statusProgress = 'Gagal';
+                $k->tahapSekarang = 'Diterima di Lowongan lain';
+
+            }
+            elseif ($k->totalTahap == 0) {
                 $k->statusProgress = 'Belum mulai';
                 $k->tahapSekarang = '-';
 

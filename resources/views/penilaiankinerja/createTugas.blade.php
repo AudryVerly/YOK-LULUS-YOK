@@ -108,11 +108,11 @@
                             </div>
                             <div class="form-group mb-2">
                                 <label for="bobotNilai" name="bobotNilai"
-                                    class="form-label fw-bold text-secondary">Nilai</label>
+                                    class="form-label fw-bold text-secondary">Bobot Nilai</label>
                                 <i class="material-symbols-rounded text-secondary ms-0" data-bs-toggle="tooltip"
                                     data-bs-placement="top"
-                                    title="Masukkan nilai yang akan didapatkan oleh mahasiswa, jika menyelesikan tugas ini"
-                                    bisa berupa angka atau desimal (contoh: 60 atau 60.5)
+                                    title="Masukkan bobot yang akan didapatkan oleh mahasiswa, jika menyelesikan tugas ini"
+                                    bisa berupa angka atau desimal (contoh: 15 atau 15.5)
                                     style="font-size: 1rem; cursor: help;">
                                     info
                                 </i>

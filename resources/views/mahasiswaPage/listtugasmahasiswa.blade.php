@@ -62,8 +62,16 @@
                                                     <span class="badge bg-info">Menunggu Penilaian</span>
                                                 @elseif ($t->progressTugas == 'revisi')
                                                     <span class="badge bg-danger">Perlu Revisi</span>
-                                                @else
-                                                    <span class="badge bg-success">Selesai</span>
+                                                @elseif($t->progressTugas == 'done')
+                                                    <span class="badge bg-success">Selesai</span><br>
+
+                                                    <small class="text-muted">
+                                                        Nilai Akhir (hasil perhitungan: nilai × bobot):
+                                                    </small><br>
+
+                                                    <span class="fw-bold text-dark">
+                                                        {{ $t->nilaiAkhir }}
+                                                    </span>
                                                 @endif
                                             </td>
                                             <td class="text-sm" style="text-align: center;">
@@ -102,7 +110,7 @@
                                                         </button>
                                                     @endif
 
-                                                    @if($t->progressTugas == 'submitted')
+                                                    @if ($t->progressTugas == 'submitted')
                                                         <span class="badge bg-success">Sudah diKumpulkan</span>
                                                     @elseif ($t->progressTugas == 'done')
                                                         <span class="badge bg-success">Sudah diNilai</span>
@@ -144,6 +152,11 @@
                         <div class="p-3 border rounded mb-3">
                             <small class="text-muted">Deskripsi</small>
                             <div>{{ $t->deskripsi }}</div>
+                        </div>
+
+                        <div class="p-3 border rounded mb-3">
+                            <small class="text-muted">Bobot Nilai</small>
+                            <div>{{ $t->bobotNilai }}</div>
                         </div>
 
                         <div class="p-3 border rounded mb-3">
