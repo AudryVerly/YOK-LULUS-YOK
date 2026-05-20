@@ -206,7 +206,7 @@ class PengumumanController extends Controller
                             ->where('pt.idPendaftaran', $pg->idPendaftaran)
                             ->where('tr.idLowongan', $idLowongan)
                             ->where('tr.urutan', '<', $tahapFinal->urutan)
-                            ->where('pt.status', 'Proses')
+                            ->whereNotIn('pt.status', ['Lulus', 'Gagal'])
                             ->exists();
 
                         if ($belumSelesai) {

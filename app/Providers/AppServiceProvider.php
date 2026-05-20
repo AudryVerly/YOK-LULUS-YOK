@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,5 +35,7 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('role:AdminOrStaff', fn ($user) => in_array($user->role, ['AdminUnit', 'StaffUnit'])
         );
+
+        Carbon::setLocale('id');
     }
 }

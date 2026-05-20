@@ -53,13 +53,21 @@
                                                     @elseif ($kan->statusPendaftaran == 'diterima')
                                                         <span
                                                             class="badge bg-gradient-success text-white px-3 py-2">DiTerima</span>
-                                                    @elseif ($kan -> statusPendaftaran == 'ditolak')
+                                                    @elseif ($kan->statusPendaftaran == 'ditolak')
                                                         <span
                                                             class="badge bg-gradient-danger text-white px-3 py-2">DiTolak</span>
                                                     @endif
                                                 </div>
                                             </td>
-                                            <td class="text-sm" style="text-align: center;">{{ $kan->tahapIni }}</td>
+                                            <td class="text-sm" style="text-align: center;">
+                                                @if ($kan->tahapIni === 'ditolak_otomatis')
+                                                    <span class="text-muted">Gagal</span>
+                                                    <br>
+                                                    <small class="text-danger">Diterima di lowongan lain</small>
+                                                @else
+                                                    {{ $kan->tahapIni }}
+                                                @endif
+                                            </td>
                                             <td>
                                                 <div class="d-flex justify-content-center gap-2">
                                                     <a href="{{ route('kandidat.detailKandidat', $kan->idPendaftaran) }} "

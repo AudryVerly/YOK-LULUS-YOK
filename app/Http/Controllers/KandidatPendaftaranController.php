@@ -60,9 +60,21 @@ class KandidatPendaftaranController extends Controller
             $progressKandidat = DB::table('progress_tahapan_kandidat')
                 ->where('idPendaftaran', $item->idPendaftaran)
                 ->get();
-           
+
             if ($item->statusPendaftaran == 'ditolak') {
-                $item->tahapIni = 'Gagal';
+                $adaProgress = DB::table('progress_tahapan_kandidat')
+                    ->where('idPendaftaran', $item->idPendaftaran)
+                    ->exists();
+                $ditolakKarenaLowonganLain = DB::table('progress_tahapan_kandidat')
+                    ->where('idPendaftaran', $item->idPendaftaran)
+                    ->where('catatan', 'Dibatalkan karena sudah diterima di lowongan lain')
+                    ->exists();
+
+                if (! $adaProgress || $ditolakKarenaLowonganLain) {
+                    $item->tahapIni = 'ditolak_otomatis';
+                } else {
+                    $item->tahapIni = 'Gagal';
+                }
 
                 continue;
             }

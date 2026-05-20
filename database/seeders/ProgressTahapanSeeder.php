@@ -65,20 +65,6 @@ class ProgressTahapanSeeder extends Seeder
                 'status' => 'Lulus',
                 'catatan' => "Hasil akhir pengumuman"
             ],
-            //pendaftaran 5
-            [
-                'idTahapRekrutmen' => 5,
-                'idPendaftaran' => 5,
-                'status' => 'Proses',
-                'catatan' => ''
-            ],
-            //pendaftaran 6
-            [
-                'idTahapRekrutmen' => 9 ,
-                'idPendaftaran' => 6,
-                'status' => 'Proses',
-                'catatan' => ''
-            ]
         ]);
     }
 }

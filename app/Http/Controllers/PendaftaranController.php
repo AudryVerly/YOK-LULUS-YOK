@@ -239,38 +239,57 @@ class PendaftaranController extends Controller
 
         // kita pakai ini karena kan di progress kandidat  itu perline
         $tahapIni = null;
-        $tahapanBerprogress = false;
+        // $tahapanBerprogress = false;
+        $adaProgress = false;
+
+        // foreach ($tahapan as $tahap) {
+        //     // jadi ini kita bakal tempelin tahapan yabng ada di lowongan ini dengan progress
+        //     // yang udah dilakukan sama semua
+        //     if (isset($progress[$tahap->id])) {
+        //         $tahap->status = $progress[$tahap->id]->status;
+        //         $tahap->catatan = $progress[$tahap->id]->catatan;
+
+        //         $tahapanBerprogress = true;
+        //     } else {
+        //         $tahap->status = 'Menunggu';
+        //     }
+
+        //     // if (isset($progress[$tahap->id])) {
+        //     //     $tahapanBerprogress = true;
+        //     // }
+
+        //     if ($tahap->status === 'Proses') {
+        //         $tahapIni = $tahap->name;
+        //         break;
+        //     } elseif ($tahap->status === 'Lulus' || $tahap->status === 'Gagal') {
+        //         $tahapIni = $tahap->name;
+        //     }
+        // }
 
         foreach ($tahapan as $tahap) {
-            // jadi ini kita bakal tempelin tahapan yabng ada di lowongan ini dengan progress
-            // yang udah dilakukan sama semua
-            if (isset($progress[$tahap->id])) {
-                $tahap->status = $progress[$tahap->id]->status;
-                $tahap->catatan = $progress[$tahap->id]->catatan;
+
+            $status = $progress[$tahap->id]->status ?? null;
+            $catatan = $progress[$tahap->id]->catatan ?? null;
+
+            if ($status) {
+                $tahap->status = $status;
+                $tahap->catatan = $catatan;
+                $adaProgress = true;
             } else {
-                $tahap->status = 'Menunggu';
+                $tahap->status = 'Belum Diproses';
+                $tahap->catatan = null;
             }
 
-            if (isset($progress[$tahap->id])) {
-                $tahapanBerprogress = true;
-            }
-
-            if ($tahap->status === 'Proses') {
-                $tahapIni = $tahap->name;
-                break;
-            } elseif ($tahap->status === 'Lulus' || $tahap->status === 'Gagal') {
+            // ambil tahap terakhir yang relevan (yang sudah terjadi)
+            if (in_array($tahap->status, ['Proses', 'Lulus', 'Gagal'])) {
                 $tahapIni = $tahap->name;
             }
         }
-
+        
         // ini buat kandidat yang ketolak dari awal, karena memang udah keterima dilowongan lain
         // atau yang belum sama sekali masuk lowongan
-        if (! $tahapanBerprogress) {
-            if ($pendaftaran->statusPendaftaran == 'ditolak') {
-                $tahapIni = 'Tidak Lolos / Sudah Diterima di Lowongan Lain';
-            } else {
-                $tahapIni = null;
-            }
+        if (! $adaProgress && $pendaftaran->statusPendaftaran == 'ditolak') {
+            $tahapIni = 'ditolak_otomatis';
         }
 
         $summaryPenilaian = DB::table('wawancara_penilai as wp')
@@ -332,17 +351,18 @@ class PendaftaranController extends Controller
                 'jw.tanggal_wawancara',
             )
             ->get();
+
         $summary = DB::table('wawancara_penilai as wp')
-        ->leftJoin('penilaian_kandidat as pk', 'pk.idWawancaraPenilai', '=', 'wp.id')
-        ->join('jadwal_wawancara as jw', 'jw.id', '=', 'wp.idJadwalWawancara')
-        ->where('jw.idPendaftaran', $idPendaftaran)
-        ->where('wp.status', 'sudah')
-        ->whereNotNull('pk.nilaiFinal')
-        ->select(
-            DB::raw('AVG(pk.nilaiFinal) as nilaiAkhir'),
-            DB::raw('COUNT(pk.id) as jumlahPenilai')
-        )
-        ->first();
+            ->leftJoin('penilaian_kandidat as pk', 'pk.idWawancaraPenilai', '=', 'wp.id')
+            ->join('jadwal_wawancara as jw', 'jw.id', '=', 'wp.idJadwalWawancara')
+            ->where('jw.idPendaftaran', $idPendaftaran)
+            ->where('wp.status', 'sudah')
+            ->whereNotNull('pk.nilaiFinal')
+            ->select(
+                DB::raw('AVG(pk.nilaiFinal) as nilaiAkhir'),
+                DB::raw('COUNT(pk.id) as jumlahPenilai')
+            )
+            ->first();
 
         // detail kriteria
         $detailKriteria = DB::table('penilaian_setiap_bobot as pb')
@@ -362,6 +382,6 @@ class PendaftaranController extends Controller
             ->get()
             ->groupBy('idPenilaianKandidat');
 
-        return view('pendaftaran.detailnilaikandidat',compact('kandidat','penilaian','detailKriteria','summary'));
+        return view('pendaftaran.detailnilaikandidat', compact('kandidat', 'penilaian', 'detailKriteria', 'summary'));
     }
 }

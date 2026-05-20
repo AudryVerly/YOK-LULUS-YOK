@@ -109,58 +109,69 @@
                 <div class="card shadow-sm border-0 p-4" style="border-radius: 16px;">
                     <div class="mb-4">
                         <h5 class="fw-bold mb-1">Progress Tahapan Seleksi</h5>
-                        <p class="text-muted small">Pantau terus perkembangan lamaran magang kamu di sini.</p>
+                        <p class="text-muted small">Pantau terus perkembangan lamaran kamu di sini.</p>
                     </div>
 
                     <div class="timeline-pro">
-                        @foreach ($tahapan as $tahap)
-                            <div class="timeline-item-pro">
-                                <div
-                                    class="bullet-pro 
+                        @if ($tahapIni === 'ditolak_otomatis')
+                            <div class="text-center py-4">
+                                <i class="material-symbols-rounded text-danger" style="font-size: 48px;">cancel</i>
+                                <h6 class="fw-bold text-danger mt-2">Pendaftaran Tidak Dilanjutkan</h6>
+                                <p class="text-muted small"> Mohon maaf, pendaftaran kamu pada lowongan ini tidak dapat
+                                    dilanjutkan.</p>
+                            </div>
+                        @else
+                            @foreach ($tahapan as $tahap)
+                                <div class="timeline-item-pro">
+                                    <div
+                                        class="bullet-pro 
                                 @if ($tahap->status == 'Lulus') bullet-success 
                                 @elseif($tahap->status == 'Gagal') bullet-danger 
                                 @elseif($tahap->status == 'Proses') bullet-warning 
                                 @else bullet-waiting @endif">
-                                </div>
-
-                                <div class="timeline-content">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="fw-bold mb-1" style="font-size: 15px; color: #252f40;">
-                                                {{ $tahap->name }}</h6>
-                                            <p class="text-muted mb-0" style="font-size: 13px;">
-                                                @if ($tahap->status == 'Lulus')
-                                                    Selamat! Kamu lolos tahap ini.
-                                                @elseif($tahap->status == 'Gagal')
-                                                    Mohon maaf, kamu belum bisa lanjut.
-                                                    @if (!empty($tahap->catatan))
-                                                        <div class="text-danger mt-1" style="font-size: 12px;">
-                                                            Alasan: {{ $tahap->catatan }}
-                                                        </div>
-                                                    @endif
-                                                @elseif($tahap->status == 'Proses')
-                                                    Sedang dalam peninjauan oleh tim terkait.
-                                                @else
-                                                    Menunggu Proses Rekrutmen
-                                                @endif
-                                            </p>
-                                        </div>
-
-                                        @if ($tahap->status == 'Lulus')
-                                            <span class="badge bg-gradient-success" style="font-size: 10px;">LULUS</span>
-                                        @elseif($tahap->status == 'Gagal')
-                                            <span class="badge bg-gradient-danger" style="font-size: 10px;">GAGAL</span>
-                                        @elseif($tahap->status == 'Proses')
-                                            <span class="badge bg-gradient-warning" style="font-size: 10px;">DIPROSES</span>
-                                        @else
-                                            <span class="badge bg-light text-secondary border"
-                                                style="font-size: 10px;">BELUM</span>
-                                        @endif
                                     </div>
-                                </div>
 
-                            </div>
-                        @endforeach
+                                    <div class="timeline-content">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="fw-bold mb-1" style="font-size: 15px; color: #252f40;">
+                                                    {{ $tahap->name }}</h6>
+                                                <p class="text-muted mb-0" style="font-size: 13px;">
+                                                    @if ($tahap->status == 'Lulus')
+                                                        Selamat! Kamu lolos tahap ini.
+                                                    @elseif($tahap->status == 'Gagal')
+                                                        Mohon maaf, kamu belum bisa lanjut.
+                                                        @if (!empty($tahap->catatan))
+                                                            <div class="text-danger mt-1" style="font-size: 12px;">
+                                                                Alasan: {{ $tahap->catatan }}
+                                                            </div>
+                                                        @endif
+                                                    @elseif($tahap->status == 'Proses')
+                                                        Sedang dalam peninjauan oleh tim terkait.
+                                                    @else
+                                                        Menunggu Proses Rekrutmen
+                                                    @endif
+                                                </p>
+                                            </div>
+
+                                            @if ($tahap->status == 'Lulus')
+                                                <span class="badge bg-gradient-success"
+                                                    style="font-size: 10px;">LULUS</span>
+                                            @elseif($tahap->status == 'Gagal')
+                                                <span class="badge bg-gradient-danger" style="font-size: 10px;">GAGAL</span>
+                                            @elseif($tahap->status == 'Proses')
+                                                <span class="badge bg-gradient-warning"
+                                                    style="font-size: 10px;">DIPROSES</span>
+                                            @else
+                                                <span class="badge bg-light text-secondary border"
+                                                    style="font-size: 10px;">BELUM</span>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
                     @if ($summaryPenilaian && $summaryPenilaian->jumlahPenilai > 0)
                         <div class="card shadow-sm border-0" style="border-radius:16px;">
@@ -188,7 +199,8 @@
                                 </div>
                                 <hr>
                                 <div class="text-end">
-                                    <a href="{{ route('riwayatpendaftaran.nilai',$pendaftaran->id) }}" class="btn btn-dark btn-sm">
+                                    <a href="{{ route('riwayatpendaftaran.nilai', $pendaftaran->id) }}"
+                                        class="btn btn-dark btn-sm">
                                         Lihat Detail Penilaian
                                     </a>
                                 </div>
