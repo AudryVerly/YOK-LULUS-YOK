@@ -160,6 +160,7 @@
                     <p><strong>Waktu Wawancara:</strong> <span id="detailJam"></span></p>
                     <p><strong>Lokasi:</strong> <span id="detailLokasi"></span></p>
                     <p><strong>Link:</strong> <a href="#" id="detailLink" target="_blank">Buka Link</a></p>
+                    {{-- <p><strong>Link:</strong> <span id="detailLinkContainer">-</span></p> --}}
                     <p><strong>Keterangan:</strong> <span id="detailKeterangan"></span></p>
                     <p><strong>Status:</strong> <span id="detailStatus"></span></p>
                 </div>
@@ -172,9 +173,11 @@
         </div>
     </div>
 @endpush
+
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script>
         let jumlahPenilaiFix = {{ $jumlahPenilaiFix ?? 'null' }};
 
@@ -232,6 +235,14 @@
                         $('#btnCancelJadwal').addClass('d-none');
                     }
 
+                    // if (e.link && e.link.trim() !== '') {
+                    //     $('#detailLinkContainer').html(
+                    //         `<a href="${e.link}" target="_blank">Buka Link</a>`
+                    //     );
+                    // } else {
+                    //     $('#detailLinkContainer').text('-');
+                    // }
+
                     $('#modalDetailJadwal').modal('show');
                 }
             });
@@ -248,7 +259,8 @@
                     Swal.fire({
                         icon: 'warning',
                         title: 'Batas Penilai',
-                        text:'Maksimal penilai ' + jumlahPenilaiFix + ' orang, tidak bisa menambah lagi',
+                        text: 'Maksimal penilai ' + jumlahPenilaiFix +
+                            ' orang, tidak bisa menambah lagi',
                         didOpen: () => {
                             document.querySelector('.swal2-container').style.zIndex = '99999';
                         }
@@ -424,7 +436,8 @@
             form[0].reset();
 
             // paksa bersihin semua input
-            form.find('input[type="text"]:not([readonly]), input[type="date"], input[type="time"], textarea').val('');
+            form.find('input[type="text"]:not([readonly]), input[type="date"], input[type="time"], textarea').val(
+                '');
 
             // uncheck checkbox
             form.find('input[type="checkbox"]').prop('checked', false);

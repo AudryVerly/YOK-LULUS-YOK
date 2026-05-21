@@ -249,7 +249,7 @@
                 displayEventEnd: true,
 
                 eventClick: function(info) {
-                    console.log(info.event.extendedProps); // DEBUG
+                    console.log(info.event.extendedProps);
 
                     let data = info.event.extendedProps || {};
                     let html = '';

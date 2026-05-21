@@ -73,12 +73,14 @@ class AHPController extends Controller
             $matrix[$i][$i] = 1;
             $matrix[$j][$j] = 1;
         }
-
+        
+        //ini untuk ambil semua kriteria
         $allKriteria = array_unique(array_merge(
             array_column($data, 'kriteria1'),
             array_column($data, 'kriteria2')
         ));
 
+        //mengecek matriks supaya matriksnya selalu persegi
         foreach ($allKriteria as $i) {
             foreach ($allKriteria as $j) {
                 if (! isset($matrix[$i][$j])) {
@@ -171,7 +173,6 @@ class AHPController extends Controller
         }
 
         // simpan pairwise
-        // ini delete supaya data pairwise di id itu tidak duplikat
         foreach ($data as $item) {
             PairwiseComparison::updateOrCreate(
                 [

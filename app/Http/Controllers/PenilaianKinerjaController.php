@@ -230,6 +230,7 @@ class PenilaianKinerjaController extends Controller
 
             $dataInsert = [];
 
+            //ini siapa tau mahasiswanya lebih dari 1
             foreach ($request->idMahasiswa as $idMhs) {
                 $dataInsert[] = [
                     'idMahasiswa' => $idMhs,
