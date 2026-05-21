@@ -197,7 +197,7 @@
                         <div class="form-group mb-2">
                             <label for="tugas" class="form-label fw-bold text-secondary">Upload Tugas</label>
                             <div class="custom-tooltip"
-                                data-title="Masukkan file tugas dalam bentuk pdf,jpg,jpeg,png atau excel">
+                                data-title="Masukkan file tugas dalam bentuk pdf,jpg,jpeg,png atau excel dengan maksimum size 20MB">
                                 <i class="material-symbols-rounded text-secondary ms-1" style="font-size: 1rem;">info</i>
                             </div>
                             <div id="previewContainer" class="mt-3 text-center" style="display: none;">
@@ -207,7 +207,7 @@
                             </div>
                             <input type="file" id="tugas" name="tugas"
                                 class="form-control shadow-sm border rounded-3 px-3 py-2">
-                            @error('file_path')
+                            @error('tugas')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>

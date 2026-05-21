@@ -131,7 +131,7 @@
                                 </div>
                                 <input type="file" id="surat" name="surat"
                                     class="form-control shadow-sm border rounded-3 px-3 py-2">
-                                @error('file_path')
+                                @error('surat')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
