@@ -548,4 +548,108 @@ class WawancaraController extends Controller
 
         return view('staffUnitPage.listwawancarastaff', compact('jadwal'));
     }
+
+    // ini code baru buat wawancara
+    public function listLowongan()
+    {
+        $idUnit = Auth::user()->staffUnit()->pluck('idUnit')->first();
+
+        $lowongan = DB::table('lowongan as l')
+            ->leftJoin('pendaftaran as p', 'p.idLowongan', '=', 'l.id')
+            ->leftJoin('progress_tahapan_kandidat as pt', 'pt.idPendaftaran', '=', 'p.id')
+            ->leftJoin('tahap_rekrutmen as tr', 'tr.id', '=', 'pt.idTahapRekrutmen')
+            ->select(
+                'l.id',
+                'l.judulLowongan',
+                'l.batasPendaftaran',
+                'l.mulaiKerja',
+                DB::raw('COUNT(DISTINCT p.id) as totalKandidat')
+            )
+            ->where('l.idUnit', $idUnit)
+            ->where('tr.tipe_tahap', 'Wawancara')
+            ->whereIn('pt.status', ['Proses', 'Lulus'])
+            ->groupBy(
+                'l.id',
+                'l.judulLowongan',
+                'l.batasPendaftaran',
+                'l.mulaiKerja'
+            )
+            ->get();
+
+        foreach ($lowongan as $item) {
+
+            $totalKandidatAktif = DB::table('pendaftaran')
+                ->where('idLowongan', $item->id)
+                ->whereIn('statusPendaftaran', ['terdaftar', 'diproses','diterima'])
+                ->count();
+
+            // kandidat yang sudah masuk tahap wawancara
+            $totalWawancara = DB::table('pendaftaran as p')
+                ->where('p.idLowongan', $item->id)
+                ->whereIn('p.statusPendaftaran', ['diproses', 'diterima'])
+                ->whereExists(function ($q) {
+                    $q->select(DB::raw(1))
+                        ->from('progress_tahapan_kandidat as pt')
+                        ->join('tahap_rekrutmen as tr', 'tr.id', '=', 'pt.idTahapRekrutmen')
+                        ->whereColumn('pt.idPendaftaran', 'p.id')
+                        ->where('tr.tipe_tahap', 'Wawancara');
+                })
+                ->count();
+
+            // kandidat yang sudah dijadwalkan
+            $sudahTerjadwal = DB::table('jadwal_wawancara as j')
+                ->join('pendaftaran as p', 'p.id', '=', 'j.idPendaftaran')
+                ->where('p.idLowongan', $item->id)
+                ->where('j.status', '!=', 'batal')
+                ->distinct()
+                ->count('j.idPendaftaran');
+
+            $belumTerjadwal = max(0, $totalWawancara - $sudahTerjadwal);
+
+            $belumMasukWawancara = max(
+                0,
+                $totalKandidatAktif - $totalWawancara
+            );
+
+            // 5. Display progress
+            $item->totalKandidatAktif = $totalKandidatAktif;
+            $item->totalWawancara = $totalWawancara;
+            $item->sudahTerjadwal = $sudahTerjadwal;
+            $item->belumTerjadwal = $belumTerjadwal;
+            $item->belumMasukWawancara = $belumMasukWawancara;
+
+            $item->progressGenerate = $totalWawancara.'/'.$totalKandidatAktif;
+
+            if ($totalKandidatAktif == 0) {
+
+                $item->statusGenerate = 'Tidak Ada Kandidat';
+
+            } elseif ($totalWawancara == 0) {
+
+                $item->statusGenerate = 'Belum Ada Kandidat Wawancara';
+
+            } elseif ($belumMasukWawancara > 0) {
+
+                $item->statusGenerate = 'Masih Seleksi Awal';
+
+            } elseif ($sudahTerjadwal < $totalWawancara) {
+
+                $item->statusGenerate = 'Belum Lengkap';
+
+            } elseif (
+                $sudahTerjadwal == $totalWawancara &&
+                $belumMasukWawancara == 0 &&
+                $totalWawancara > 0
+            ) {
+
+                $item->statusGenerate = 'Sudah Generate';
+
+            } else {
+
+                $item->statusGenerate = 'Belum Lengkap';
+            }
+        }
+
+        return view('setwawancara.listlowonganiview', compact('lowongan'));
+    }
 }

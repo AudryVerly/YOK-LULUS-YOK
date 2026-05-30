@@ -131,6 +131,15 @@
                     </a>
                 </li>
             @endcan
+            @can('role:AdminUnit')
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('generatewawancara*') ? 'active bg-gradient-dark text-white' : 'text-dark' }}"
+                        href="{{ route('generatewawancara.listlowongan') }}">
+                        <i class="material-symbols-rounded opacity-5">calendar_month</i>
+                        <span class="nav-link-text ms-1">Penjadwalan Wawancara</span>
+                    </a>
+                </li>
+            @endcan
             @can('role:Mahasiswa')
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('riwayatPendaftaran*') ? 'active bg-gradient-dark text-white' : 'text-dark' }}"
@@ -172,7 +181,7 @@
                     <a class="nav-link {{ request()->is('kriteriaUnit*') ? 'active bg-gradient-dark text-white' : 'text-dark' }}"
                         href="{{ route('kriteria.showUnit') }}">
                         <i class="material-symbols-rounded opacity-5">variables</i>
-                        <span class="nav-link-text ms-1">Kriteria</span>
+                        <span class="nav-link-text ms-1">Kriteria Rekrutmen</span>
                     </a>
                 </li>
             @endcan

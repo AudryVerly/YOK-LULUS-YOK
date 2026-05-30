@@ -151,6 +151,8 @@ Route::middleware(['auth','role:AdminUnit'])->group(function(){
   Route::post('/kriteriakinerja/storekriteriaKinerja',[KriteriaKinerjaController::class,'saveKriteriaUnit'])->name('kriteriakinerja.kriteriaKinerja');
   Route::post('/kriteriakinerja/resetkriteria',[KriteriaKinerjaController::class,'resetKriteria'])->name('kriteriakinerja.resetkriteria');
 
+  Route::get('/generatewawancara/listlowongan',[WawancaraController::class,'listLowongan'])->name('generatewawancara.listlowongan');
+
 });
 Route::middleware(['auth','role:StaffUnit'])->group(function(){
    Route::get('/dashboardStaff',[DashboardStaffUnitController::class, 'index'])->name('staff.dashboard');
