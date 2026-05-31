@@ -22,6 +22,7 @@ use App\Http\Controllers\TimPenilaiController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WawancaraController;
+use App\Http\Controllers\InterviewController;
 use App\Models\Lowongan;
 use App\Models\Mahasiswa;
 use App\Models\StaffUnit;
@@ -151,8 +152,12 @@ Route::middleware(['auth','role:AdminUnit'])->group(function(){
   Route::post('/kriteriakinerja/storekriteriaKinerja',[KriteriaKinerjaController::class,'saveKriteriaUnit'])->name('kriteriakinerja.kriteriaKinerja');
   Route::post('/kriteriakinerja/resetkriteria',[KriteriaKinerjaController::class,'resetKriteria'])->name('kriteriakinerja.resetkriteria');
 
-  Route::get('/generatewawancara/listlowongan',[WawancaraController::class,'listLowongan'])->name('generatewawancara.listlowongan');
-
+  Route::get('/generatewawancara/listlowongan',[InterviewController::class,'listLowongan'])->name('generatewawancara.listlowongan');
+  Route::get('/generatewawancara/autogenerate/{idLowongan}',[InterviewController::class,'showAutoGenerate'])->name('generatewawancara.showautogenerate');
+  Route::get('/generatewawancara/listreschedule',[InterviewController::class,'listPerluReschedule'])->name('generatewawancara.listreschedule');
+  Route::get('/generatewawancara/reshedule/{idJadwal}',[InterviewController::class,'showReschedule'])->name('generatewawancara.showreschedule');
+  Route::post('/generatewawancara/autogenerate/{idLowongan}',[InterviewController::class, 'prosesAutoGenerate'])->name('generatewawancara.prosesautogenerate');
+  Route::post('/generatewawancara/reshedule/{idJadwal}',[InterviewController::class, 'prosesReschedule'])->name('generatewawancara.prosesreschedule');
 });
 Route::middleware(['auth','role:StaffUnit'])->group(function(){
    Route::get('/dashboardStaff',[DashboardStaffUnitController::class, 'index'])->name('staff.dashboard');

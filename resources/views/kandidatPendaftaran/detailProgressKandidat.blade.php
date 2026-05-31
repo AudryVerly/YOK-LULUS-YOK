@@ -223,28 +223,18 @@
                                         </div>
                                     @endif
                                     @if ($tahap->tipe_tahap == 'Wawancara' && in_array($tahap->status, ['Proses', 'Lulus']) && !$isFinal)
-                                        @if (!$isWawancara || !$penilaianStart)
-                                            <button class="btn btn-secondary btn-sm px-3" disabled>
-                                                Wawancara
-                                            </button>
+                                        @if ($jumlahJadwalWawancara > 0)
+                                            <a href="{{ route('kandidat.wawancara', [
+                                                'idProgressTahapan' => $tahap->progress_id,
+                                                'idPendaftaran' => $detailKandidat->idPendaftaran,
+                                            ]) }}"
+                                                class="btn btn-outline-primary btn-sm px-3">
+                                                Lihat Jadwal Wawancara
+                                            </a>
                                         @else
-                                            @if ($jumlahJadwalWawancara == 0)
-                                                <a href="{{ route('kandidat.wawancara', [
-                                                    'idProgressTahapan' => $tahap->progress_id,
-                                                    'idPendaftaran' => $detailKandidat->idPendaftaran,
-                                                ]) }}"
-                                                    class="btn btn-info btn-sm px-3">
-                                                    Set Wawancara
-                                                </a>
-                                            @else
-                                                <a href="{{ route('kandidat.wawancara', [
-                                                    'idProgressTahapan' => $tahap->progress_id,
-                                                    'idPendaftaran' => $detailKandidat->idPendaftaran,
-                                                ]) }}"
-                                                    class="btn btn-warning btn-sm px-3">
-                                                    Edit / Tambah Wawancara
-                                                </a>
-                                            @endif
+                                            <span class="text-muted small">
+                                                Jadwal belum tersedia
+                                            </span>
                                         @endif
                                     @endif
                                 </div>

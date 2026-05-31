@@ -15,10 +15,9 @@
     </div>
 @endsection
 @push('modals')
-    <div class="modal fade" id="modalwawancara" tabindex="-1" aria-hidden="true">
+    {{--<div class="modal fade" id="modalwawancara" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                {{-- <form method="POST" id="formwawancara" action="{{ route('kandidat.addWawancara') }}"> --}}
                 <form method="POST" id="formwawancara" action="/simpanWawancara">
                     @csrf
                     <div
@@ -138,13 +137,12 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button> --}}
                         <button type="submit" class="btn btn-success" id="btnSubmit">Simpan</button>
                     </div>
                 </form>
             </div>
         </div>
-    </div>
+    </div>--}}
 
     <div class="modal fade" id="modalDetailJadwal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -247,26 +245,26 @@
                 }
             });
 
-            $('input[name="tim_penilai[]"]').on('change', function() {
+            // $('input[name="tim_penilai[]"]').on('change', function() {
 
-                if (jumlahPenilaiFix === null) return;
+            //     if (jumlahPenilaiFix === null) return;
 
-                let checked = $('input[name="tim_penilai[]"]:checked');
+            //     let checked = $('input[name="tim_penilai[]"]:checked');
 
-                if (checked.length > jumlahPenilaiFix) {
-                    this.checked = false;
+            //     if (checked.length > jumlahPenilaiFix) {
+            //         this.checked = false;
 
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Batas Penilai',
-                        text: 'Maksimal penilai ' + jumlahPenilaiFix +
-                            ' orang, tidak bisa menambah lagi',
-                        didOpen: () => {
-                            document.querySelector('.swal2-container').style.zIndex = '99999';
-                        }
-                    });
-                }
-            });
+            //         Swal.fire({
+            //             icon: 'warning',
+            //             title: 'Batas Penilai',
+            //             text: 'Maksimal penilai ' + jumlahPenilaiFix +
+            //                 ' orang, tidak bisa menambah lagi',
+            //             didOpen: () => {
+            //                 document.querySelector('.swal2-container').style.zIndex = '99999';
+            //             }
+            //         });
+            //     }
+            // });
 
             let tanggalvent = [];
 
@@ -440,7 +438,7 @@
                 '');
 
             // uncheck checkbox
-            form.find('input[type="checkbox"]').prop('checked', false);
+            form.find('input[type="checkbox"]').prop('checked', false);a
         });
     </script>
 @endpush

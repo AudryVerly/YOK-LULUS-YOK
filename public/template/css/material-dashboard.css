@@ -30092,4 +30092,56 @@ body.login-page::before {
   cursor: not-allowed;
 }
 
+.soft-card {
+  border: 1px solid #eef0f3;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+.soft-input {
+  border-radius: 10px !important;
+  border: 1px solid #e6e8ef !important;
+  padding: 10px 12px;
+  transition: all .2s ease;
+}
+
+.soft-input:focus {
+  border-color: #4f46e5 !important;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12) !important;
+}
+
+.soft-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.box-scroll {
+  max-height: 210px;
+  overflow-y: auto;
+  border: 1px solid #eef0f3;
+  border-radius: 12px;
+  padding: 10px;
+  background: #fff;
+}
+
+.candidate-item {
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: .2s;
+}
+
+.candidate-item:hover {
+  background: #f8fafc;
+}
+
+.btn-soft {
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
 /*# sourceMappingURL=dashboard-free.css.map */

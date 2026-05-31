@@ -8,6 +8,7 @@
                 <div
                     class ="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center px-4">
                     <h6 class="text-white text-capitalize m-0">List Lowongan</h6>
+                    <a href="{{route('generatewawancara.listreschedule') }}" class="btn btn-sm btn-white">Jadwal Perlu Reschedule</a>
                 </div>
             </div>
             <div class="card-body px-0 pb-2 ">
@@ -58,7 +59,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="#" class="btn btn-primary btn-sm">
+                                        <a href="{{ route('generatewawancara.showautogenerate',$l->id) }}" class="btn btn-primary btn-sm">
                                             Generate Jadwal
                                         </a>
                                     </td>
