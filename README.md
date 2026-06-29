@@ -64,7 +64,7 @@ Sistem ini memiliki **3 role pengguna** | This system has **3 user roles**:
 
 - PHP >= 8.2
 - Composer ([getcomposer.org](https://getcomposer.org))
-- Node.js & npm ([nodejs.org](https://nodejs.org))
+- Node.js & npm ([nodejs.org](https://nodejs.org)) (khusus untuk penggunan diluar xampp)
 - MySQL (via XAMPP, Laragon, or similar)
 
 ### Langkah-langkah | Steps
